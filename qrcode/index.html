@@ -4,6 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
 	<script type="text/javascript" src="assets/qrcode.js"></script>
+	<script type="text/javascript" src="assets/qrcode_SJIS.js"></script>
 	<script type="text/javascript" src="assets/sample.js"></script>
 	<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 	<script type="text/javascript" src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
@@ -11,7 +12,7 @@
 	<title>QR Code Generator</title>
 </head>
 
-<body>
+<body onload="update_qrcode()" >
 
 <a href="http://www.d-project.com/">home</a>
 
@@ -31,9 +32,14 @@ Last Update: 2014/08/08
 </div>
 
 <div class="section">
-<script type="text/javascript">
-draw_qrcode("from javascript");
-</script>
+
+<form>
+	<textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
+	<br/>
+	<input type="button" value="update" onclick="update_qrcode()"/>
+	<div id="qr"></div>
+</form>
+
 </div>
 
 <div class="section">
