@@ -1,0 +1,58 @@
+/*
+ * SimcirJS
+ *
+ * Copyright (c) 2014 kazuhiko arase
+ *
+ * URL: http://www.d-project.com/
+ *
+ * Licensed under the MIT license:
+ *  http://www.opensource.org/licenses/mit-license.php
+ */
+
+.simcir {
+	
+}
+
+.simcir-workspace {
+  cursor: default;
+  overflow: hidden;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #000000;
+}
+
+.simcir-toolbox-body {
+  fill: #999999;
+}
+
+.simcir-connector {
+  stroke-width: 1;
+  stroke: #0000ff;
+}
+
+.simcir-device-body {
+  fill: #cccccc;
+  stroke-width: 1;
+  stroke: #000000;
+}
+
+*[simcir-node-type='in'] .simcir-node-body {
+  fill: #ffcc00;
+}
+
+*[simcir-node-type='out'] .simcir-node-body {
+  fill: #ffffff;
+}
+
+.simcir-node-body {
+  stroke-width: 1;
+  stroke: #000000;
+}
+
+.simcir-node-body-hover {
+  stroke: #ffff00;
+}
+
+.simcir-node-body-hot {
+  stroke: #ff0000;
+}
