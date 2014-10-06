@@ -628,20 +628,20 @@ var simcir = function($) {
     factories[type] = factory;
   };
 
+  $(function() {
+    $('.simcir').each(function() {
+      !function($placeHolder) {
+        var $workspace = simcir.createWorkspace(
+            JSON.parse($placeHolder.text() ) );
+        $placeHolder.text('');
+        $placeHolder.append($workspace);
+      }($(this) );
+    });
+  } );
+
   return {
     createSVGElement: createSVGElement,
     createWorkspace: createWorkspace,
     registerDevice: registerDevice
   };
 }(jQuery);
-
-$(function() {
-  $('.simcir').each(function() {
-    !function($placeHolder) {
-      var $workspace = simcir.createWorkspace(
-          JSON.parse($placeHolder.text() ) );
-      $placeHolder.text('');
-      $placeHolder.append($workspace);
-    }($(this) );
-  });
-} );

@@ -14,6 +14,8 @@
       css('pointer-events', 'visiblePainted');
     base.$ui.append($button);
     $button.on('mousedown', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
       out.setValue(null);
     } );
     $button.on('mouseup', function(event) {
