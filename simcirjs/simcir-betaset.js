@@ -1,32 +1,26 @@
 
 !function($) {
-  /*
-  $.fn.simcir = function() {
-    this.each(function() {
-      setup($(this) );
-    });
-  };
-*/
-  /*
-  $.fn.simcir = function() {
-    console.log('hi!');
-  };
-  */
+
+  var HIGH = 1;
+  
   simcir.registerDevice('beta-sw', function(base) {
+    // create a single output
     var out = base.addOutput();
-    var $rect = simcir.createSVGElement('rect').
+    // create a button
+    var $button = simcir.createSVGElement('rect').
       attr({x: 8, y: 8, width: 16, height: 16}).
       css('stroke', '#000000').
       css('fill', '#f0f0f0').
       css('pointer-events', 'visiblePainted');
-    base.$ui.append($rect);
-    out.setValue(1);
-    $rect.on('mousedown', function(event) {
+    base.$ui.append($button);
+    $button.on('mousedown', function(event) {
       out.setValue(null);
     } );
-    $rect.on('mouseup', function(event) {
-      out.setValue(1);
+    $button.on('mouseup', function(event) {
+      out.setValue(HIGH);
     } );
+    // set a default value
+    out.setValue(HIGH);
   });
 
   simcir.registerDevice('beta-nand', function(base) {
@@ -37,7 +31,7 @@
       var b1 = in1.getValue() != null;
       var b2 = in2.getValue() != null;
       var o = !(b1 && b2);
-      out.setValue(o? 1 : null);
+      out.setValue(o? HIGH : null);
     } );
   });
 

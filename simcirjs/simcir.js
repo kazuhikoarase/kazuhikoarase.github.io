@@ -13,6 +13,8 @@ var simcir = function($) {
 
   var SVG_NS = 'http://www.w3.org/2000/svg';
 
+  var fontSize = 12;
+
   var createSVGElement = function(tagName) {
     return $(document.createElementNS(SVG_NS, tagName) );
   };
@@ -120,11 +122,17 @@ var simcir = function($) {
     };
   }();
 
-  var createNode = function(type) {
+  var createLabel = function(text) {
+    return createSVGElement('text').
+      text(text).
+      css('font-size', fontSize + 'px');
+  };
+
+  var createNode = function(type, label) {
     var $node = createSVGElement('g').
       attr('simcir-node-type', type).
       attr('class', 'simcir-node');
-    var node = createNodeController({ $ui: $node });
+    var node = createNodeController({ $ui: $node, label: label });
     if (type == 'in') {
       controller($node, createInputNodeController(node) );
     } else if (type == 'out') {
@@ -160,6 +168,12 @@ var simcir = function($) {
     } );
     node.$ui.append($circle);
 
+    if (node.label) {
+      var $label = createLabel(node.label).
+        attr('text-anchor', 'middle'); // start, end
+      node.$ui.append($label);
+    }
+    
     node.$ui.on('nodeValueChange', function(event) {
       if (_value != null) {
         addClass($circle, 'simcir-node-body-hot');
@@ -225,12 +239,11 @@ var simcir = function($) {
     });
   };
 
-  var createDevice = function(opts) {
+  var createDevice = function(deviceDef) {
     var $dev = createSVGElement('g').
       attr('class', 'simcir-device');
-    controller($dev, createDeviceController({$ui: $dev, opts: opts}) );
-    transform($dev, opts.x, opts.y);
-    factories[opts.type](controller($dev) );
+    controller($dev, createDeviceController({$ui: $dev, deviceDef: deviceDef}) );
+    factories[deviceDef.type](controller($dev) );
     controller($dev).doLayout();
     return $dev;
   };
@@ -250,9 +263,15 @@ var simcir = function($) {
       return controller($node);
     };
     var doLayout = function() {
+
       // todo
-      var w = 32;
-      var h = 32;
+
+      device.deviceDef.width = 32;
+      device.deviceDef.height = 32;
+      
+      var w = device.deviceDef.width;
+      var h = device.deviceDef.height;
+
       $rect.attr({x: 0, y: 0, width: w, height: h});
       var y;
       y = 0;
@@ -265,6 +284,8 @@ var simcir = function($) {
         transform(node.$ui, w, y);
         y += 8;
       } );
+
+      $label.attr({x: w / 2, y: h + fontSize});
     };
     var getImpl = function(type) {
       return device.$ui.
@@ -295,6 +316,10 @@ var simcir = function($) {
       attr('class', 'simcir-device-body');
     device.$ui.append($rect);
 
+    var $label = createLabel(device.deviceDef.label || '').
+      attr('text-anchor', 'middle');
+    device.$ui.append($label);
+
     return $.extend(device, {
       addInput: addInput,
       addOutput: addOutput,
@@ -311,10 +336,18 @@ var simcir = function($) {
       attr('class', 'simcir-connector');
   };
 
-  var setup = function($placeHolder) {
+  var createWorkspace = function(data) {
 
-    var workspaceWidth = 200;
-    var workspaceHeight = 100;
+    data = $.extend({
+      width: 320,
+      height: 240,
+      toolbox: [],
+      devices: [],
+      connectors: [],
+    }, data);
+
+    var workspaceWidth = data.width;
+    var workspaceHeight = data.height;
     var toolboxWidth = 48;
 
     var $workspace = createSVG(
@@ -399,10 +432,11 @@ var simcir = function($) {
         var index = +RegExp.$2;
         return $($devs[devId].children('.simcir-node')[index]);
       };
-      $.each(data.devices, function(i, dev) {
-        var $dev = createDevice(dev);
+      $.each(data.devices, function(i, deviceDef) {
+        var $dev = createDevice(deviceDef);
+        transform($dev, deviceDef.x, deviceDef.y);
         addDevice($dev);
-        $devs[dev.id] = $dev;
+        $devs[deviceDef.id] = $dev;
       } );
       $.each(data.connectors, function(i, conn) {
         connect(getNode(conn.from), getNode(conn.to) );
@@ -448,7 +482,7 @@ var simcir = function($) {
       var $dev = $target.closest('.simcir-device');
       var pos = transform($dev);
 
-      $dev = createDevice(controller($dev).opts);
+      $dev = createDevice(controller($dev).deviceDef);
       transform($dev, pos.x, pos.y);
       $temporaryPane.append($dev);
       var dragPoint = {
@@ -574,22 +608,19 @@ var simcir = function($) {
     $workspace.on('mousedown', eventLogHandler);
     $workspace.on('mouseup', eventLogHandler);
 */
-    var data = JSON.parse($placeHolder.text() );
     load(data);
-    $placeHolder.text('');
-    $placeHolder.append($workspace);
 
     !function() {
       var y = 8;
-      $.each(data.toolbox, function(i, dev) {
-        $toolboxPane.append(createDevice({type: dev.type, x: 8, y: y}) );
-        y += 40;
+      $.each(data.toolbox, function(i, deviceDef) {
+        var $dev = createDevice(deviceDef);
+        transform($dev, 8, y);
+        $toolboxPane.append($dev);
+        y += (deviceDef.height + fontSize + 8);
       } );
     }();
-
-    return {
-
-    };
+    
+    return $workspace;
   };
 
   var factories = {};
@@ -598,14 +629,19 @@ var simcir = function($) {
   };
 
   return {
-    setup: setup,
     createSVGElement: createSVGElement,
+    createWorkspace: createWorkspace,
     registerDevice: registerDevice
   };
 }(jQuery);
 
 $(function() {
   $('.simcir').each(function() {
-    simcir.setup($(this) );
+    !function($placeHolder) {
+      var $workspace = simcir.createWorkspace(
+          JSON.parse($placeHolder.text() ) );
+      $placeHolder.text('');
+      $placeHolder.append($workspace);
+    }($(this) );
   });
 } );

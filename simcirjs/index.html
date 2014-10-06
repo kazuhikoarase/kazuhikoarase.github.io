@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 <!-- SimcirJS -->
 <script type="text/javascript" src="simcir.js"></script>
@@ -12,16 +12,18 @@
 
 <!-- Demo -->
 <script type="text/javascript" src="simcir-betaset.js"></script>
-<link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 <style type="text/css">
+@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro);
 * { font-family: "Meiryo UI", arial, sans-serif; }
-.simcir { font-family: "Source Code Pro"; }
 .caution {
   color: #ffffff;
   background-color: #cc0000;
   font-weight: bold;
   margin: 16px 0px 16px 0px; 
   padding: 4px;
+}
+.simcir {
+  font-family: "Source Code Pro";
 }
 </style>
 <!-- /Demo -->
@@ -51,15 +53,17 @@ Basic function test with RS-FF.
 </p>
 <div id="mycir" class="simcir">
 {
+  "width" : 320,
+  "height" : 240,
   "toolbox" : [
-    {"type": "beta-sw"},
-    {"type": "beta-nand"}
+    {"type": "beta-sw", "label": "PushOff"},
+    {"type": "beta-nand", "label": "NAND"}
   ],
   "devices" : [
-    {"id":"dev1", "type":"beta-sw", "x":60, "y": 10},
-    {"id":"dev2", "type":"beta-sw", "x":60, "y": 60},
-    {"id":"dev3", "type":"beta-nand", "x":120, "y": 10},
-    {"id":"dev4", "type":"beta-nand", "x":120, "y": 60}
+    {"id":"dev1", "type":"beta-sw", "x":60, "y": 10, "label": "~Set"},
+    {"id":"dev2", "type":"beta-sw", "x":60, "y": 60, "label": "~Reset"},
+    {"id":"dev3", "type":"beta-nand", "x":120, "y": 10, "label": "NAND"},
+    {"id":"dev4", "type":"beta-nand", "x":120, "y": 60, "label": "NAND"}
   ],
   "connectors" : [
     {"from":"dev1.0", "to":"dev3.0"},
@@ -72,18 +76,17 @@ Basic function test with RS-FF.
 
 <h3>Fig.2</h3>
 
-<div id="mycir2" class="simcir">
+<div class="simcir">
 {
   "toolbox" : [
-    {"type": "beta-sw"},
-    {"type": "beta-nand"}
-  ],
-  "devices" : [
-  ],
-  "connectors" : [
+    {"type": "beta-sw", "label": "PushOff"},
+    {"type": "beta-nand", "label": "NAND"}
   ]
 }
 </div>
+
+<h3>Fig.3</h3>
+<div class="simcir">{}</div>
 
 </body>
 </html>
