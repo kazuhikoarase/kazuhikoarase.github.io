@@ -1,0 +1,31 @@
+
+// register to reuse
+simcir.registerDevice('beta-rs-ff',
+    {
+  "width":320,
+  "height":240,
+  "toolbox":[
+    {"type":"port","port-type":"in","label":"InPort"},
+    {"type":"port","port-type":"out","label":"OutPort"},
+    {"type":"beta-sw","label":"PushOff"},
+    {"type":"beta-nand","label":"NAND"},
+    {"type":"myLib","label":"MYLib"}
+  ],
+  "devices":[
+    {"type":"port","port-type":"in","label":"~S","id":"dev0","x":40,"y":64},
+    {"type":"port","port-type":"in","label":"~R","id":"dev1","x":40,"y":136},
+    {"id":"dev2","type":"beta-nand","x":88,"y":72,"label":"NAND"},
+    {"id":"dev3","type":"beta-nand","x":88,"y":128,"label":"NAND"},
+    {"type":"port","port-type":"out","label":"Q","id":"dev4","x":136,"y":72},
+    {"type":"port","port-type":"out","label":"~Q","id":"dev5","x":136,"y":128}
+  ],
+  "connectors":[
+    {"from":"dev2.0","to":"dev0.1"},
+    {"from":"dev2.1","to":"dev3.2"},
+    {"from":"dev3.0","to":"dev2.2"},
+    {"from":"dev3.1","to":"dev1.1"},
+    {"from":"dev4.0","to":"dev2.2"},
+    {"from":"dev5.0","to":"dev3.2"}
+  ]
+}
+);

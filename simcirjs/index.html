@@ -2,91 +2,92 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-
-<!-- SimcirJS -->
 <script type="text/javascript" src="simcir.js"></script>
 <link rel="stylesheet" type="text/css" href="simcir.css" />
-<!-- /SimcirJS -->
-
-<!-- Demo -->
-<script type="text/javascript" src="simcir-betaset.js"></script>
-<style type="text/css">
-@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro);
-* { font-family: "Meiryo UI", arial, sans-serif; }
-.caution {
-  color: #ffffff;
-  background-color: #cc0000;
-  font-weight: bold;
-  margin: 16px 0px 16px 0px; 
-  padding: 4px;
-}
-.simcir {
-  font-family: "Source Code Pro";
-}
-</style>
-<!-- /Demo -->
-
+<script type="text/javascript" src="simcir-basicset.js"></script>
+<script type="text/javascript" src="sample.js"></script>
+<link rel="stylesheet" type="text/css" href="sample.css" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 <title>SimcirJS</title>
 </head>
 <body>
 
 <a href="http://www.d-project.com/">home</a>
 
-<a href="https://github.com/kazuhikoarase/simcirjs"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+<a href="https://github.com/kazuhikoarase/simcirjs"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
 <h1>SimcirJS</h1>
 
-<div class="section" style="vertical-layout:middle;">
+<div style="vertical-layout:middle;">
   <g:plusone></g:plusone>
   <br/>
   <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div class="caution">Preview</div>
+<div style="color: #ffffff; background-color: #cc0000;
+  font-weight: bold; margin: 16px 0px 16px 0px;
+  padding: 4px;">Preview Release</div>
 
-<h3>Fig.1</h3>
+<table>
+<tr><td>Ctrl + Click:</td><td>Toggle View (Live circuit or JSON data)</td></tr>
+</table>
+
+
+<h3>Empty</h3>
+<div class="simcir">{}</div>
+
+<h3>RS-FF</h3>
 <p>
 Basic function test with RS-FF.
 </p>
-<div id="mycir" class="simcir">
+<div class="simcir">
 {
-  "width" : 320,
-  "height" : 240,
-  "toolbox" : [
-    {"type": "beta-sw", "label": "PushOff"},
-    {"type": "beta-nand", "label": "NAND"}
+  "width":320,
+  "height":240,
+  "toolbox":[
+    {"type":"port", "port-type":"in", "label":"InPort"},
+    {"type":"port", "port-type":"out", "label":"OutPort"},
+    {"type":"beta-sw","label":"PushOff"},
+    {"type":"beta-nand","label":"NAND"}
   ],
-  "devices" : [
-    {"id":"dev1", "type":"beta-sw", "x":60, "y": 10, "label": "~Set"},
-    {"id":"dev2", "type":"beta-sw", "x":60, "y": 60, "label": "~Reset"},
-    {"id":"dev3", "type":"beta-nand", "x":120, "y": 10, "label": "NAND"},
-    {"id":"dev4", "type":"beta-nand", "x":120, "y": 60, "label": "NAND"}
+  "devices":[
+    {"id":"dev0","type":"beta-sw","x":8,"y":8,"label":"~Set"},
+    {"id":"dev1","type":"beta-sw","x":8,"y":64,"label":"~Reset"},
+    {"id":"dev2","type":"beta-nand","x":64,"y":64,"label":"NAND"},
+    {"id":"dev3","type":"beta-nand","x":64,"y":8,"label":"NAND"}
   ],
-  "connectors" : [
-    {"from":"dev1.0", "to":"dev3.0"},
-    {"from":"dev2.0", "to":"dev4.1"},
-    {"from":"dev3.2", "to":"dev4.0"},
-    {"from":"dev4.2", "to":"dev3.1"}
+  "connectors":[
+    {"from":"dev2.0","to":"dev3.2"},
+    {"from":"dev2.1","to":"dev1.0"},
+    {"from":"dev3.0","to":"dev0.0"},
+    {"from":"dev3.1","to":"dev2.2"}
   ]
 }
 </div>
 
-<h3>Fig.2</h3>
+<h3>Reuse a circuit</h3>
 
 <div class="simcir">
 {
-  "toolbox" : [
-    {"type": "beta-sw", "label": "PushOff"},
-    {"type": "beta-nand", "label": "NAND"}
+  "width":320,
+  "height":240,
+  "toolbox":[
+    {"type":"beta-sw","label":"PushOff"},
+    {"type":"beta-rs-ff","label":"RS-FF"}
+  ],
+  "devices":[
+    {"type":"beta-rs-ff","label":"RS-FF","id":"dev0","x":64,"y":32},
+    {"type":"beta-sw","label":"PushOff","id":"dev1","x":8,"y":8},
+    {"type":"beta-sw","label":"PushOff","id":"dev2","x":8,"y":56}
+  ],
+  "connectors":[
+    {"from":"dev0.0","to":"dev1.0"},
+    {"from":"dev0.1","to":"dev2.0"}
   ]
 }
 </div>
-
-<h3>Fig.3</h3>
-<div class="simcir">{}</div>
 
 </body>
 </html>
