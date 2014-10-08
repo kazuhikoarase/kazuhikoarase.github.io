@@ -6,6 +6,7 @@
 <script type="text/javascript" src="simcir.js"></script>
 <link rel="stylesheet" type="text/css" href="simcir.css" />
 <script type="text/javascript" src="simcir-basicset.js"></script>
+<link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
 <script type="text/javascript" src="sample.js"></script>
 <link rel="stylesheet" type="text/css" href="sample.css" />
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
@@ -26,10 +27,6 @@
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-<div style="color: #ffffff; background-color: #cc0000;
-  font-weight: bold; margin: 16px 0px 16px 0px;
-  padding: 4px;">Preview Release</div>
-
 <div>
   SimcirJS is fully rewrited version of Simcir (circuit simulator)
   with HTML5, JavaScript and jQuery.
@@ -44,43 +41,68 @@
   <li>Ctrl+Click to toggle view (Live circuit or JSON data)</li>
 </ul>
 
-<h3>Blank</h3>
 <div class="simcir">
 {
+  "width":600,
+  "height":200,
   "toolbox":[
-    {"type":"port", "port-type":"in", "label":"InPort"},
-    {"type":"port", "port-type":"out", "label":"OutPort"},
-    {"type":"beta-sw","label":"PushOff"},
-    {"type":"beta-nand","label":"NAND"}
+    {"type":"In"},
+    {"type":"Out"},
+    {"type":"DC"},
+    {"type":"PushOff"},
+    {"type":"PushOn"},
+    {"type":"Toggle"},
+    {"type":"BUF"},
+    {"type":"NOT"},
+    {"type":"AND"},
+    {"type":"NAND"},
+    {"type":"OR"},
+    {"type":"NOR"},
+    {"type":"EOR"},
+    {"type":"ENOR"}
   ]
 }
 </div>
 
 <h3>RS-FF</h3>
 <p>
-Basic function test with RS-FF.
+To reuse a circuit as library, use In and Out.
 </p>
 <div class="simcir">
 {
-  "width":320,
-  "height":240,
+  "width":600,
+  "height":200,
   "toolbox":[
-    {"type":"port", "port-type":"in", "label":"InPort"},
-    {"type":"port", "port-type":"out", "label":"OutPort"},
-    {"type":"beta-sw","label":"PushOff"},
-    {"type":"beta-nand","label":"NAND"}
+    {"type":"In"},
+    {"type":"Out"},
+    {"type":"DC"},
+    {"type":"PushOff"},
+    {"type":"PushOn"},
+    {"type":"Toggle"},
+    {"type":"NAND"}
   ],
   "devices":[
-    {"id":"dev0","type":"beta-sw","x":8,"y":8,"label":"~Set"},
-    {"id":"dev1","type":"beta-sw","x":8,"y":64,"label":"~Reset"},
-    {"id":"dev2","type":"beta-nand","x":64,"y":64,"label":"NAND"},
-    {"id":"dev3","type":"beta-nand","x":64,"y":8,"label":"NAND"}
+    {"type":"In","id":"dev0","x":216,"y":112,"label":"~R"},
+    {"type":"NAND","id":"dev1","x":264,"y":56,"label":"NAND"},
+    {"type":"NAND","id":"dev2","x":264,"y":104,"label":"NAND"},
+    {"type":"Out","id":"dev3","x":312,"y":56,"label":"Q"},
+    {"type":"Out","id":"dev4","x":312,"y":104,"label":"~Q"},
+    {"type":"DC","id":"dev5","x":104,"y":80,"label":"DC"},
+    {"type":"PushOff","id":"dev6","x":160,"y":48,"label":"PushOff"},
+    {"type":"PushOff","id":"dev7","x":160,"y":112,"label":"PushOff"},
+    {"type":"In","id":"dev8","x":216,"y":48,"label":"~S"}
   ],
   "connectors":[
-    {"from":"dev2.0","to":"dev3.2"},
-    {"from":"dev2.1","to":"dev1.0"},
-    {"from":"dev3.0","to":"dev0.0"},
-    {"from":"dev3.1","to":"dev2.2"}
+    {"from":"dev0.0","to":"dev7.1"},
+    {"from":"dev1.0","to":"dev8.1"},
+    {"from":"dev1.1","to":"dev2.2"},
+    {"from":"dev2.0","to":"dev1.2"},
+    {"from":"dev2.1","to":"dev0.1"},
+    {"from":"dev3.0","to":"dev1.2"},
+    {"from":"dev4.0","to":"dev2.2"},
+    {"from":"dev6.0","to":"dev5.0"},
+    {"from":"dev7.0","to":"dev5.0"},
+    {"from":"dev8.0","to":"dev6.1"}
   ]
 }
 </div>
@@ -89,22 +111,102 @@ Basic function test with RS-FF.
 
 <div class="simcir">
 {
-  "width":320,
+  "width":600,
   "height":240,
   "toolbox":[
-    {"type":"beta-sw","label":"PushOff"},
-    {"type":"beta-rs-ff","label":"RS-FF"}
+    {"type":"In"},
+    {"type":"Out"},
+    {"type":"DC"},
+    {"type":"PushOff"},
+    {"type":"PushOn"},
+    {"type":"Toggle"},
+    {"type":"NAND"},
+    {"type":"NAND","numInputs":3},
+    {"type":"NOT"},
+    {"type":"RS-FF"}
   ],
   "devices":[
-    {"type":"beta-rs-ff","label":"RS-FF","id":"dev0","x":64,"y":32},
-    {"type":"beta-sw","label":"PushOff","id":"dev1","x":8,"y":8},
-    {"type":"beta-sw","label":"PushOff","id":"dev2","x":8,"y":56}
+    {"type":"NAND","numInputs":3,"id":"dev0","x":192,"y":152,"label":"NAND"},
+    {"type":"RS-FF","id":"dev1","x":232,"y":120,"label":"RS-FF"},
+    {"type":"NAND","id":"dev2","x":304,"y":152,"label":"NAND"},
+    {"type":"NAND","id":"dev3","x":304,"y":88,"label":"NAND"},
+    {"type":"NAND","numInputs":3,"id":"dev4","x":192,"y":88,"label":"NAND"},
+    {"type":"In","id":"dev5","x":136,"y":120,"label":"CLK"},
+    {"type":"In","id":"dev6","x":136,"y":72,"label":"J"},
+    {"type":"In","id":"dev7","x":136,"y":168,"label":"K"},
+    {"type":"RS-FF","id":"dev8","x":352,"y":120,"label":"RS-FF"},
+    {"type":"NOT","id":"dev9","x":192,"y":32,"label":"NOT"},
+    {"type":"Out","id":"dev10","x":432,"y":88,"label":"Q"},
+    {"type":"Out","id":"dev11","x":432,"y":152,"label":"~Q"},
+    {"type":"DC","id":"dev12","x":24,"y":120,"label":"DC"},
+    {"type":"PushOn","id":"dev13","x":80,"y":120,"label":"PushOn"},
+    {"type":"Toggle","id":"dev14","x":80,"y":168,"label":"Toggle"},
+    {"type":"Toggle","id":"dev15","x":80,"y":72,"label":"Toggle"}
   ],
   "connectors":[
-    {"from":"dev0.0","to":"dev1.0"},
-    {"from":"dev0.1","to":"dev2.0"}
+    {"from":"dev0.0","to":"dev5.1"},
+    {"from":"dev0.1","to":"dev7.1"},
+    {"from":"dev0.2","to":"dev8.2"},
+    {"from":"dev1.0","to":"dev4.3"},
+    {"from":"dev1.1","to":"dev0.3"},
+    {"from":"dev2.0","to":"dev1.3"},
+    {"from":"dev2.1","to":"dev9.1"},
+    {"from":"dev3.0","to":"dev9.1"},
+    {"from":"dev3.1","to":"dev1.2"},
+    {"from":"dev4.0","to":"dev8.3"},
+    {"from":"dev4.1","to":"dev6.1"},
+    {"from":"dev4.2","to":"dev5.1"},
+    {"from":"dev5.0","to":"dev13.1"},
+    {"from":"dev6.0","to":"dev15.1"},
+    {"from":"dev7.0","to":"dev14.1"},
+    {"from":"dev8.0","to":"dev3.2"},
+    {"from":"dev8.1","to":"dev2.2"},
+    {"from":"dev9.0","to":"dev5.1"},
+    {"from":"dev10.0","to":"dev8.2"},
+    {"from":"dev11.0","to":"dev8.3"},
+    {"from":"dev13.0","to":"dev12.0"},
+    {"from":"dev14.0","to":"dev12.0"},
+    {"from":"dev15.0","to":"dev12.0"}
   ]
 }
+</div>
+
+<div class="simcir">
+{
+  "width":600,
+  "height":200,
+  "toolbox":[
+    {"type":"DC"},
+    {"type":"PushOff"},
+    {"type":"Toggle"},
+    {"type":"RS-FF"},
+    {"type":"JK-FF"}
+  ],
+  "devices":[
+    {"type":"JK-FF","id":"dev0","x":360,"y":72,"label":"JK-FF"},
+    {"type":"DC","id":"dev1","x":56,"y":80,"label":"DC"},
+    {"type":"RS-FF","id":"dev2","x":160,"y":80,"label":"RS-FF"},
+    {"type":"DC","id":"dev3","x":272,"y":48,"label":"DC"},
+    {"type":"PushOn","id":"dev4","x":272,"y":112,"label":"PushOn"},
+    {"type":"PushOff","id":"dev5","x":112,"y":112,"label":"PushOff"},
+    {"type":"PushOff","id":"dev6","x":112,"y":48,"label":"PushOff"}
+  ],
+  "connectors":[
+    {"from":"dev0.0","to":"dev3.0"},
+    {"from":"dev0.1","to":"dev4.1"},
+    {"from":"dev0.2","to":"dev3.0"},
+    {"from":"dev2.0","to":"dev6.1"},
+    {"from":"dev2.1","to":"dev5.1"},
+    {"from":"dev4.0","to":"dev3.0"},
+    {"from":"dev5.0","to":"dev1.0"},
+    {"from":"dev6.0","to":"dev1.0"}
+  ]
+}
+</div>
+
+<hr/>
+<div style="text-align: right;">
+Contents Copyright &copy; Kazuhiko Arase
 </div>
 
 </body>

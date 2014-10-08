@@ -1,7 +1,7 @@
 //
 // SimcirJS
 //
-// Copyright (c) 2014 kazuhiko arase
+// Copyright (c) 2014 Kazuhiko Arase
 //
 // URL: http://www.d-project.com/
 //
@@ -161,19 +161,21 @@ var simcir = function($) {
       return _value;
     };
 
+    node.$ui.attr('class', 'simcir-node simcir-node-type-' + node.type);
+
     var $circle = createSVGElement('circle').
-      attr({cx: 0, cy: 0, r: 4}).
-      attr('class', 'simcir-node-body simcir-node-type-' + node.type);
-    $circle.on('mouseover', function(event) {
-      addClass($circle, 'simcir-node-body-hover');
+      attr({cx: 0, cy: 0, r: 4});
+    node.$ui.on('mouseover', function(event) {
+      addClass(node.$ui, 'simcir-node-hover');
     } );
-    $circle.on('mouseout', function(event) {
-      removeClass($circle, 'simcir-node-body-hover');
+    node.$ui.on('mouseout', function(event) {
+      removeClass(node.$ui, 'simcir-node-hover');
     } );
     node.$ui.append($circle);
 
     if (node.label) {
-      var $label = createLabel(node.label);
+      var $label = createLabel(node.label).
+        attr('class', 'simcir-node-label');
       if (node.type == 'in') {
         $label.attr('text-anchor', 'start').
           attr('x', 6).
@@ -185,12 +187,11 @@ var simcir = function($) {
       }
       node.$ui.append($label);
     }
-    
     node.$ui.on('nodeValueChange', function(event) {
       if (_value != null) {
-        addClass($circle, 'simcir-node-body-hot');
+        addClass(node.$ui, 'simcir-node-hot');
       } else {
-        removeClass($circle, 'simcir-node-body-hot');
+        removeClass(node.$ui, 'simcir-node-hot');
       }
     } );
     return $.extend(node, {
@@ -256,7 +257,10 @@ var simcir = function($) {
       attr('class', 'simcir-device');
     controller($dev, createDeviceController(
         {$ui: $dev, deviceDef: deviceDef}) );
-    factories[deviceDef.type](controller($dev) );
+    var factory = factories[deviceDef.type];
+    if (factory) {
+      factory(controller($dev) );
+    }
     controller($dev).doLayout();
     return $dev;
   };
@@ -276,7 +280,11 @@ var simcir = function($) {
       return controller($node);
     };
     var getSize = function() {
-      return {width: 32, height: 32};
+      var nodes = Math.max(device.getInputs().length,
+          device.getOutputs().length);
+      return { width: unit * 2,
+        height: unit * Math.max(2, device.halfPitch?
+            (nodes + 1) / 2 : nodes)};
     };
     var doLayout = function() {
 
@@ -286,7 +294,7 @@ var simcir = function($) {
 
       $rect.attr({x: 0, y: 0, width: w, height: h});
 
-      var pitch = unit;
+      var pitch = device.halfPitch? unit / 2 : unit;
       var layoutNodes = function(nodes, x) {
         var offset = (h - pitch * (nodes.length - 1) ) / 2;
         $.each(nodes, function(i, node) {
@@ -327,33 +335,40 @@ var simcir = function($) {
     var setSelected = function(value) {
       selected = value;
       if (selected) {
-        addClass($rect, 'simcir-device-body-selected');
+        addClass($rect, 'simcir-device-selected');
       } else {
-        removeClass($rect, 'simcir-device-body-selected');
+        removeClass($rect, 'simcir-device-selected');
       }
     };
     var isSelected = function() {
       return selected;
     };
+    
+    device.$ui.attr('class', 'simcir-device');
 
-    var $rect = createSVGElement('rect').
-      attr('class', 'simcir-device-body');
+    var $rect = createSVGElement('rect').attr('rx', 2).attr('ry', 2);
     device.$ui.append($rect);
 
-    var $label = createLabel(device.deviceDef.label || '').
+    var label = device.deviceDef.label;
+    if (typeof label == 'undefined') {
+      label = device.deviceDef.type;
+    }
+    var $label = createLabel(label).
+      attr('class', 'simcir-device-label').
       attr('text-anchor', 'middle');
     device.$ui.append($label);
 
     return $.extend(device, {
       addInput: addInput,
       addOutput: addOutput,
-      getSize: getSize,
-      doLayout: doLayout,
       getInputs: getInputs,
       getOutputs: getOutputs,
       disconnectAll: disconnectAll,
       setSelected: setSelected,
-      isSelected: isSelected
+      isSelected: isSelected,
+      getSize: getSize,
+      doLayout: doLayout,
+      halfPitch: false
     });
   };
 
@@ -396,34 +411,50 @@ var simcir = function($) {
     return $devices;
   };
 
-  var createLibraryFactory = function(data) {
+  var createDeviceRefFactory = function(data) {
     return function(device) {
-      $.each(buildCircuit(data), function(i, $dev) {
+      var $devs = buildCircuit(data);
+      var $ports = [];
+      $.each($devs, function(i, $dev) {
         var deviceDef = controller($dev).deviceDef;
-        if (deviceDef.type == 'port') {
-          var port = controller($dev);
-          var portType = deviceDef['port-type'];
-          var inPort;
-          var outPort;
-          if (portType == 'in') {
-            inPort = device.addInput(deviceDef.label);
-            outPort = port.getOutputs()[0];
-          } else if (portType == 'out') {
-            outPort = device.addOutput(deviceDef.label);
-            inPort = port.getInputs()[0];
-          } else {
-            throw 'unknown port-type:' + portType;
-          }
-          inPort.$ui.on('nodeValueChange', function() {
-            outPort.setValue(inPort.getValue() );
-          } );
+        if (deviceDef.type == 'In' || deviceDef.type == 'Out') {
+          $ports.push($dev);
         }
+      });
+      $ports.sort(function($p1, $p2) {
+        var x1 = controller($p1).deviceDef.x;
+        var y1 = controller($p1).deviceDef.y;
+        var x2 = controller($p2).deviceDef.x;
+        var y2 = controller($p2).deviceDef.y;
+        if (x1 == x2) {
+          return (y1 < y2)? -1 : 1;
+        }
+        return (x1 < x2)? -1 : 1;
       } );
+      $.each($ports, function(i, $dev) {
+        var deviceDef = controller($dev).deviceDef;
+        var inPort;
+        var outPort;
+        if (deviceDef.type == 'In') {
+          inPort = device.addInput(deviceDef.label);
+          outPort = controller($dev).getOutputs()[0];
+          // force disconnect test devices that connected to In-port
+          var inNode = controller($dev).getInputs()[0];
+          if (inNode.getOutput() != null) {
+            inNode.getOutput().disconnectFrom(inNode);
+          }
+        } else if (deviceDef.type == 'Out') {
+          outPort = device.addOutput(deviceDef.label);
+          inPort = controller($dev).getInputs()[0];
+        } 
+        inPort.$ui.on('nodeValueChange', function() {
+          outPort.setValue(inPort.getValue() );
+        } );
+      } );
+      var super_getSize = device.getSize;
       device.getSize = function() {
-        return {width: unit * 4, height:
-          Math.max(unit * 2, Math.max(
-              device.getInputs().length * unit / 2,
-              device.getOutputs().length * unit / 2) ) };
+        var size = super_getSize();
+        return {width: unit * 4, height: size.height};
       };
     };
   };
@@ -431,16 +462,115 @@ var simcir = function($) {
   var factories = {};
   var registerDevice = function(type, factory) {
     if (typeof factory == 'object') {
-      factory = createLibraryFactory(factory);
+      factory = createDeviceRefFactory(factory);
     }
     factories[type] = factory;
+  };
+
+  var createScrollbar = function() {
+
+    // vertical only.
+    var _value = 0;
+    var _min = 0;
+    var _max = 0;
+    var _barSize = 0;
+    var _width = 0;
+    var _height = 0;
+
+    var $body = createSVGElement('rect');
+    var $bar = createSVGElement('g').
+      append(createSVGElement('rect') ).
+      attr('class', 'simcir-scrollbar-bar');
+    var $scrollbar = createSVGElement('g').
+      attr('class', 'simcir-scrollbar').
+      append($body).append($bar);
+
+    var dragPoint = null;
+    var bar_mouseDownHandler = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var pos = transform($bar);
+      dragPoint = {
+          x: event.pageX - pos.x,
+          y: event.pageY - pos.y};
+      $(document).on('mousemove', bar_mouseMoveHandler);
+      $(document).on('mouseup', bar_mouseUpHandler);
+    };
+    var bar_mouseMoveHandler = function(event) {
+      calc(function(unitSize) {
+        setValues( (event.pageY - dragPoint.y) /
+            unitSize, _min, _max, _barSize); 
+      });
+    };
+    var bar_mouseUpHandler = function(event) {
+      $(document).off('mousemove', bar_mouseMoveHandler);
+      $(document).off('mouseup', bar_mouseUpHandler);
+    };
+    $bar.on('mousedown', bar_mouseDownHandler);
+    var body_mouseDownHandler = function(event) {
+      var off = $scrollbar.parents('svg').offset();
+      var pos = transform($scrollbar);
+      var y = event.pageY - off.top - pos.y;
+      var barPos = transform($bar);
+      if (y < barPos.y) {
+        setValues(_value - _barSize, _min, _max, _barSize); 
+      } else {
+        setValues(_value + _barSize, _min, _max, _barSize); 
+      }
+    };
+    $body.on('mousedown', body_mouseDownHandler);
+
+    var setSize = function(width, height) {
+      _width = width;
+      _height = height;
+      layout();
+    };
+    var layout = function() {
+
+      $body.attr({x: 0, y: 0, width: _width, height: _height});
+
+      var visible = _max - _min > _barSize;
+      $bar.css('display', visible? 'inline' : 'none');
+      if (!visible) {
+        return;
+      }
+      calc(function(unitSize) {
+        $bar.children('rect').
+          attr({x: 0, y: 0, width: _width, height: _barSize * unitSize});
+        transform($bar, 0, _value * unitSize);
+      } );
+    };
+    var calc = function(f) {
+      f(_height / (_max - _min) );
+    };
+    var setValues = function(value, min, max, barSize) {
+      value = Math.max(min, Math.min(value, max - barSize) ); 
+      var changed = (value != _value);
+      _value = value;
+      _min = min;
+      _max = max;
+      _barSize = barSize;
+      layout();
+      if (changed) {
+        $scrollbar.trigger('scrollValueChange');
+      }
+    };
+    var getValue = function() {
+      return _value;
+    };
+    controller($scrollbar, {
+      setSize: setSize,
+      setValues: setValues,
+      getValue: getValue
+    });
+    return $scrollbar;
   };
 
   var createWorkspace = function(data) {
 
     data = $.extend({
-      width: 320,
-      height: 240,
+      width: 800,
+      height: 300,
       toolbox: [],
       devices: [],
       connectors: [],
@@ -454,21 +584,24 @@ var simcir = function($) {
     var $workspace = createSVG(
         workspaceWidth, workspaceHeight).
       attr('class', 'simcir-workspace');
-    var $scrollbar = createSVGElement('g').
-      append(createSVGElement('rect').
-        attr({x: 0, y: 0, width: barWidth,
-          height: workspaceHeight}).
-        attr('class', 'simcir-scrollbar-body') );
+
+    var $toolboxDevicePane = createSVGElement('g');
+    var $scrollbar = createScrollbar();
+    $scrollbar.on('scrollValueChange', function(event) {
+      transform($toolboxDevicePane, 0,
+          -controller($scrollbar).getValue() );
+    });
+    controller($scrollbar).setSize(barWidth, workspaceHeight);
     transform($scrollbar, toolboxWidth - barWidth, 0);
     var $toolboxPane = createSVGElement('g').
       attr('class', 'simcir-toolbox').
       append(createSVGElement('rect').
         attr({x: 0, y: 0,
           width: toolboxWidth,
-          height: workspaceHeight}).
-        attr('class', 'simcir-toolbox-body') ).
+          height: workspaceHeight}) ).
+      append($toolboxDevicePane).
       append($scrollbar);
-    
+
     var $devicePane = createSVGElement('g');
     transform($devicePane, toolboxWidth, 0);
     var $connectorPane = createSVGElement('g');
@@ -525,23 +658,24 @@ var simcir = function($) {
       var y = vgap;
       $.each(data.toolbox, function(i, deviceDef) {
         var $dev = createDevice(deviceDef);
+        $toolboxDevicePane.append($dev);
         var size = controller($dev).getSize();
         transform($dev, (toolboxWidth - barWidth - size.width) / 2, y);
-        $toolboxPane.append($dev);
         y += (size.height + fontSize + vgap);
       } );
+      controller($scrollbar).setValues(0, 0, y, workspaceHeight);
     };
 
     var text = function() {
 
-      // renumber
+      // renumber all id
       var devIdCount = 0;
-      $devicePane.find('.simcir-device').each(function() {
+      $devicePane.children('.simcir-device').each(function() {
         var $dev = $(this);
         var devId = 'dev' + devIdCount++;
         controller($dev).id = devId;
         var nodeIdCount= 0;
-        $dev.find('.simcir-node').each(function() {
+        $dev.children('.simcir-node').each(function() {
           var $node = $(this);
           controller($node).id = devId + '.' + nodeIdCount++;
         });
@@ -553,12 +687,12 @@ var simcir = function($) {
       var clone = function(obj) {
         return JSON.parse(JSON.stringify(obj) );
       };
-      $toolboxPane.find('.simcir-device').each(function() {
+      $toolboxDevicePane.children('.simcir-device').each(function() {
         var $dev = $(this);
         var device = controller($dev);
         toolbox.push(device.deviceDef);
       });
-      $devicePane.find('.simcir-device').each(function() {
+      $devicePane.children('.simcir-device').each(function() {
         var $dev = $(this);
         var device = controller($dev);
         $.each(device.getInputs(), function(i, inNode) {
@@ -571,12 +705,18 @@ var simcir = function($) {
         deviceDef.id = device.id;
         deviceDef.x = pos.x;
         deviceDef.y = pos.y;
+        if (typeof deviceDef.label == 'undefined') {
+          deviceDef.label = deviceDef.type;
+        }
         devices.push(deviceDef);
       });
 
       var buf = '';
-      var println = function(s) {
+      var print = function(s) {
         buf += s;
+      };
+      var println = function(s) {
+        print(s);
         buf += '\r\n';
       };
       var printArray = function(array) {
@@ -597,14 +737,13 @@ var simcir = function($) {
       println('  "connectors":[');
       printArray(connectors);
       println('  ]');
-      println('}');
+      print('}');
       return buf;
     };
     
     //-------------------------------------------
     // mouse operations
 
-    var mousedown = false;
     var dragMoveHandler = null;
     var dragCompleteHandler = null;
 
@@ -625,11 +764,11 @@ var simcir = function($) {
     };
 
     var beginConnect = function(event, $target) {
-      var $dataAreaNode = $target.closest('.simcir-node');
+      var $srcNode = $target.closest('.simcir-node');
       var off = $workspace.offset();
-      var pos = offset($dataAreaNode);
-      if ($dataAreaNode.attr('simcir-node-type') == 'in') {
-        disconnect($dataAreaNode);
+      var pos = offset($srcNode);
+      if ($srcNode.attr('simcir-node-type') == 'in') {
+        disconnect($srcNode);
       }
       dragMoveHandler = function(event) {
         var x = event.pageX - off.left;
@@ -642,7 +781,7 @@ var simcir = function($) {
         var $dst = $(event.target);
         if (isActiveNode($dst) ) {
           var $dstNode = $dst.closest('.simcir-node');
-          connect($dataAreaNode, $dstNode);
+          connect($srcNode, $dstNode);
           updateConnectors();
         }
       };
@@ -650,15 +789,13 @@ var simcir = function($) {
 
     var beginNewDevice = function(event, $target) {
       var $dev = $target.closest('.simcir-device');
-      var pos = transform($dev);
-
+      var pos = offset($dev);
       $dev = createDevice(controller($dev).deviceDef);
       transform($dev, pos.x, pos.y);
       $temporaryPane.append($dev);
       var dragPoint = {
         x: event.pageX - pos.x,
-        y: event.pageY - pos.y
-      };
+        y: event.pageY - pos.y};
       dragMoveHandler = function(event) {
         transform($dev, 
             event.pageX - dragPoint.x,
@@ -774,24 +911,9 @@ var simcir = function($) {
       };
     };
 
-    var defaultMouseUpHandler = function(event) {
-      mousedown = false;
-      dragMoveHandler = null;
-      dragCompleteHandler = null;
-      $devicePane.find('.simcir-device').each(function() {
-        enableEvents($(this), true);
-      });
-      $temporaryPane.children().remove();
-    };
-
     var mouseDownHandler = function(event) {
       var $target = $(event.target);
       event.preventDefault();
-      if (mousedown) {
-        defaultMouseUpHandler();
-      }
-      mousedown = true;
-
       if (isActiveNode($target) ) {
         beginConnect(event, $target);
       } else if ($target.closest('.simcir-device').length == 1) {
@@ -803,6 +925,8 @@ var simcir = function($) {
       } else {
         beginSelectDevice(event, $target);
       }
+      $(document).on('mousemove', mouseMoveHandler);
+      $(document).on('mouseup', mouseUpHandler);
     };
     var mouseMoveHandler = function(event) {
       if (dragMoveHandler != null) {
@@ -813,12 +937,16 @@ var simcir = function($) {
       if (dragCompleteHandler != null) {
         dragCompleteHandler(event);
       }
-      defaultMouseUpHandler();
+      dragMoveHandler = null;
+      dragCompleteHandler = null;
+      $devicePane.children('.simcir-device').each(function() {
+        enableEvents($(this), true);
+      });
+      $temporaryPane.children().remove();
+      $(document).off('mousemove', mouseMoveHandler);
+      $(document).off('mouseup', mouseUpHandler);
     };
-
     $workspace.on('mousedown', mouseDownHandler);
-    $(document).on('mousemove', mouseMoveHandler);
-    $(document).on('mouseup', mouseUpHandler);
 
     //-------------------------------------------
     //
@@ -835,6 +963,28 @@ var simcir = function($) {
 
     return $workspace;
   };
+
+  var createPortFactory = function(type) {
+    return function(device) {
+      var in1 = device.addInput();
+      var out1 = device.addOutput();
+      device.$ui.on('inputValueChange', function() {
+        out1.setValue(in1.getValue() );
+      } );
+      var size = device.getSize();
+      var cx = size.width / 2;
+      var cy = size.height / 2;
+      device.$ui.append(createSVGElement('circle').
+        attr({cx: cx, cy: cy, r: unit / 2}).
+        attr('class', 'simcir-port simcir-node-type-' + type) );
+      device.$ui.append(createSVGElement('circle').
+        attr({cx: cx, cy: cy, r: unit / 4}).
+        attr('class', 'simcir-port-hole') );
+    };
+  };
+  // register built-in devices
+  registerDevice('In', createPortFactory('in') );
+  registerDevice('Out', createPortFactory('out') );
 
   $(function() {
     $('.simcir').each(function() {
@@ -862,7 +1012,7 @@ var simcir = function($) {
         $placeHolder.text('');
         $placeHolder.append($workspace);
         $placeHolder.append($dataArea);
-        $placeHolder.on('mousedown', function(event) {
+        $placeHolder.on('click', function(event) {
           if (event.ctrlKey) {
             toggle();
           }
@@ -873,27 +1023,13 @@ var simcir = function($) {
     });
   } );
 
-  registerDevice('port', function(device) {
-    var in1 = device.addInput();
-    var out1 = device.addOutput();
-    device.$ui.on('inputValueChange', function() {
-      out1.setValue(in1.getValue() );
-    } );
-    var size = device.getSize();
-    var cx = size.width / 2;
-    var cy = size.height / 2;
-    device.$ui.append(createSVGElement('circle').
-      attr({cx: cx, cy: cy, r: 8}).
-      attr('class', 'simcir-port-body simcir-node-type-' +
-          device.deviceDef['port-type']) );
-    device.$ui.append(createSVGElement('circle').
-      attr({cx: cx, cy: cy, r: 4}).
-      attr('class', 'simcir-port-body-hole') );
-  });
-
   return {
     createSVGElement: createSVGElement,
     createWorkspace: createWorkspace,
-    registerDevice: registerDevice
+    registerDevice: registerDevice,
+    addClass: addClass,
+    removeClass: removeClass,
+    hasClass: hasClass,
+    unit: unit
   };
 }(jQuery);

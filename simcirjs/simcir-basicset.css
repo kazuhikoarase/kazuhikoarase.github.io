@@ -1,0 +1,28 @@
+/*
+ * SimcirJS - basicset
+ *
+ * Copyright (c) 2014 Kazuhiko Arase
+ *
+ * URL: http://www.d-project.com/
+ *
+ * Licensed under the MIT license:
+ *  http://www.opensource.org/licenses/mit-license.php
+ */
+
+.simcir-basicset-dc {
+  fill: #ffcccc;
+}
+
+.simcir-basicset-switch {
+  fill: #ccccff;
+}
+
+.simcir-basicset-switch-pressed {
+  fill: #9999cc;
+}
+
+.simcir-basicset-symbol {
+  stroke: #000000;
+  stroke-width: 1;
+  fill: none;
+}
