@@ -1013,7 +1013,7 @@ var simcir = function($) {
         $placeHolder.append($workspace);
         $placeHolder.append($dataArea);
         $placeHolder.on('click', function(event) {
-          if (event.ctrlKey) {
+          if (event.ctrlKey || event.metaKey) {
             toggle();
           }
         });
