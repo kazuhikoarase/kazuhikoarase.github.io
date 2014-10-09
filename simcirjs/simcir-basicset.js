@@ -24,9 +24,11 @@
     var curveTo = function(x1, y1, x, y) {
       buf += ' Q ' + x1 + ' ' + y1 + ' ' + x + ' ' + y;
     };
-    var closePath = function() {
-      // fake
-      //buf += ' Z';
+    var closePath = function(close) {
+      if (close) {
+        // really close path.
+        buf += ' Z';
+      }
       $target.append(simcir.createSVGElement('path').
           attr('d', buf).
           attr('class', 'simcir-basicset-symbol') );
@@ -45,6 +47,50 @@
       drawCircle: drawCircle
     };
   };
+  
+  var multiplyColor = function() {
+    var HEX = '0123456789abcdef';
+    var toIColor = function(sColor) {
+      if (!sColor) {
+        return 0;
+      }
+      sColor = sColor.toLowerCase();
+      if (sColor.match(/^#[0-9a-f]{3}$/i) ) {
+        var iColor = 0;
+        for (var i = 0; i < 6; i += 1) {
+          iColor = (iColor << 4) | HEX.indexOf(sColor.charAt( (i >> 1) + 1) );
+        }
+        return iColor;
+      } else if (sColor.match(/^#[0-9a-f]{6}$/i) ) {
+        var iColor = 0;
+        for (var i = 0; i < 6; i += 1) {
+          iColor = (iColor << 4) | HEX.indexOf(sColor.charAt(i + 1) );
+        }
+        return iColor;
+      }
+      return 0;
+    };
+    var toSColor = function(iColor) {
+      var sColor = '#';
+      for (var i = 0; i < 6; i += 1) {
+        sColor += HEX.charAt( (iColor >>> (5 - i) * 4) & 0x0f);
+      }
+      return sColor;
+    };
+    var multiplyColor = function(iColor, ratio) {
+      var r = (iColor >>> 16) & 0xff;
+      var g = (iColor >>> 8) & 0xff;
+      var b = iColor & 0xff;
+      var mc = function(v, ratio) {
+        return Math.max(0, Math.min(v * ratio, 255) );
+      };
+      return (mc(r, ratio) << 16) | (mc(g, ratio) << 8) | mc(b, ratio);
+    };
+    return function(color, ratio) {
+      return toSColor(multiplyColor(toIColor(color), ratio) );
+    };
+  }();
+
   // symbol draw functions
   var drawBUF = function(g, x, y, width, height) {
     g.moveTo(x, y);
@@ -107,8 +153,11 @@
       var in1 = device.addInput();
       var out1 = device.addOutput();
       var on = (type == 'PushOff');
+      var size = device.getSize();
       var $button = simcir.createSVGElement('rect').
-        attr({x: 8, y: 8, width: 16, height: 16, rx: 2, ry: 2}).
+        attr({x: size.width / 4, y: size.height / 4,
+          width: size.width / 2, height: size.height / 2,
+          rx: 2, ry: 2}).
         css('pointer-events', 'visiblePainted');
       device.$ui.append($button);
       var button_mouseDownHandler = function(event) {
@@ -157,9 +206,9 @@
     };
   };
 
-  var createLogicGateFactory = function(op, out, draw, singleInput) {
+  var createLogicGateFactory = function(op, out, draw) {
     return function(device) {
-      var numInputs = singleInput? 1 :
+      var numInputs = (op == null)? 1 :
         Math.max(2, device.deviceDef.numInputs || 2);
       for (var i = 0; i < numInputs; i += 1) {
         device.addInput();
@@ -187,9 +236,26 @@
     };
   };
 
+  // register direct current source
   simcir.registerDevice('DC', function(device) {
     device.addOutput().setValue(1);
     simcir.addClass(device.$ui, 'simcir-basicset-dc');
+  } );
+
+  // register simple LED
+  simcir.registerDevice('LED', function(device) {
+    var hiColor = device.deviceDef.color || '#ff0000';
+    var loColor = multiplyColor(hiColor, 0.25);
+    var in1 = device.addInput();
+    var size = device.getSize();
+    var $led = simcir.createSVGElement('circle').
+      attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4}).
+      attr('stroke', 'none').
+      attr('fill', loColor);
+    device.$ui.append($led);
+    device.$ui.on('inputValueChange', function() {
+      $led.attr('fill', in1.getValue() == null? loColor : hiColor);
+    } );
   } );
 
   // register switches
@@ -198,13 +264,13 @@
   simcir.registerDevice('Toggle', createSwitchFactory('Toggle') );
 
   // register logic gates
-  simcir.registerDevice('BUF', createLogicGateFactory(null, BUF, drawBUF, true) );
-  simcir.registerDevice('NOT', createLogicGateFactory(null, NOT, drawNOT, true) );
-  simcir.registerDevice('AND', createLogicGateFactory(AND, BUF, drawAND, false) );
-  simcir.registerDevice('NAND', createLogicGateFactory(AND, NOT, drawNAND, false) );
-  simcir.registerDevice('OR', createLogicGateFactory(OR, BUF, drawOR, false) );
-  simcir.registerDevice('NOR', createLogicGateFactory(OR, NOT, drawNOR, false) );
-  simcir.registerDevice('EOR', createLogicGateFactory(EOR, BUF, drawEOR, false) );
-  simcir.registerDevice('ENOR', createLogicGateFactory(EOR, NOT, drawENOR, false) );
+  simcir.registerDevice('BUF', createLogicGateFactory(null, BUF, drawBUF) );
+  simcir.registerDevice('NOT', createLogicGateFactory(null, NOT, drawNOT) );
+  simcir.registerDevice('AND', createLogicGateFactory(AND, BUF, drawAND) );
+  simcir.registerDevice('NAND', createLogicGateFactory(AND, NOT, drawNAND) );
+  simcir.registerDevice('OR', createLogicGateFactory(OR, BUF, drawOR) );
+  simcir.registerDevice('NOR', createLogicGateFactory(OR, NOT, drawNOR) );
+  simcir.registerDevice('EOR', createLogicGateFactory(EOR, BUF, drawEOR) );
+  simcir.registerDevice('ENOR', createLogicGateFactory(EOR, NOT, drawENOR) );
 
 }(jQuery);

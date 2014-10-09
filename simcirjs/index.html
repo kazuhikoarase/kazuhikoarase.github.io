@@ -37,7 +37,7 @@
   <li>Connect them by drag operation.</li>
   <li>Click an input node to disconnect.</li>
   <li>Move a device back to the toolbox if you don't use.</li>
-  <li>Ctrl(Mac:command)+Click to toggle view (Live circuit or JSON data)</li>
+  <li>Ctrl+Click(Mac:command+Click) to toggle view (Live circuit or JSON data).</li>
 </ul>
 
 <div class="simcir">
@@ -48,6 +48,7 @@
     {"type":"In"},
     {"type":"Out"},
     {"type":"DC"},
+    {"type":"LED"},
     {"type":"PushOff"},
     {"type":"PushOn"},
     {"type":"Toggle"},
@@ -199,6 +200,38 @@ To reuse a circuit as library, use In and Out.
     {"from":"dev4.0","to":"dev3.0"},
     {"from":"dev5.0","to":"dev1.0"},
     {"from":"dev6.0","to":"dev1.0"}
+  ]
+}
+</div>
+
+<h3>Customize Devices</h3>
+
+<div class="simcir">
+{
+  "width":600,
+  "height":240,
+  "toolbox":[
+    {"type":"DC"},
+    {"type":"Toggle"},
+    {"type":"LED","color":"#00ff00","label":"LED(g)"},
+    {"type":"NAND","numInputs":"3","label":"NAND(3in)"}
+  ],
+  "devices":[
+    {"type":"NAND","numInputs":"3","label":"NAND(3in)","id":"dev0","x":232,"y":96},
+    {"type":"Toggle","id":"dev1","x":176,"y":48,"label":"Toggle"},
+    {"type":"Toggle","id":"dev2","x":176,"y":96,"label":"Toggle"},
+    {"type":"Toggle","id":"dev3","x":176,"y":144,"label":"Toggle"},
+    {"type":"DC","id":"dev4","x":120,"y":96,"label":"DC"},
+    {"type":"LED","color":"#00ff00","label":"LED(g)","id":"dev5","x":288,"y":96}
+  ],
+  "connectors":[
+    {"from":"dev0.0","to":"dev1.1"},
+    {"from":"dev0.1","to":"dev2.1"},
+    {"from":"dev0.2","to":"dev3.1"},
+    {"from":"dev1.0","to":"dev4.0"},
+    {"from":"dev2.0","to":"dev4.0"},
+    {"from":"dev3.0","to":"dev4.0"},
+    {"from":"dev5.0","to":"dev0.3"}
   ]
 }
 </div>
