@@ -57,24 +57,31 @@ var simcir = function($) {
       if (c == className) {
         found = true;
       }
-    } );
+    });
     return found;
   };
 
   var transform = function() {
     var attrX = 'simcir-transform-x';
     var attrY = 'simcir-transform-y';
+    var attrRotate = 'simcir-transform-rotate';
     var num = function($o, k) {
       var v = $o.attr(k);
       return v? +v : 0;
     };
-    return function($o, x, y) {
-      if (arguments.length == 3) {
-        $o.attr('transform', 'translate(' + x + ',' + y + ')');
+    return function($o, x, y, rotate) {
+      if (arguments.length >= 3) {
+        var transform = 'translate(' + x + ' ' + y + ')';
+        if (rotate) {
+          transform += ' rotate(' + rotate + ')';
+        }
+        $o.attr('transform', transform);
         $o.attr(attrX, x);
         $o.attr(attrY, y);
+        $o.attr(attrRotate, rotate);
       } else if (arguments.length == 1) {
-        return {x: num($o, attrX), y: num($o, attrY)};
+        return {x: num($o, attrX), y: num($o, attrY),
+          rotate: num($o, attrRotate)};
       }
     };
   }();
@@ -148,6 +155,11 @@ var simcir = function($) {
     return $node;
   };
 
+  var isActiveNode = function($o) {
+    return $o.closest('.simcir-node').length == 1 &&
+      $o.closest('.simcir-toolbox').length == 0;
+  };
+
   var createNodeController = function(node) {
     var _value = null;
     var setValue = function(value, force) {
@@ -166,11 +178,15 @@ var simcir = function($) {
     var $circle = createSVGElement('circle').
       attr({cx: 0, cy: 0, r: 4});
     node.$ui.on('mouseover', function(event) {
-      addClass(node.$ui, 'simcir-node-hover');
-    } );
+      if (isActiveNode(node.$ui) ) {
+        addClass(node.$ui, 'simcir-node-hover');
+      }
+    });
     node.$ui.on('mouseout', function(event) {
-      removeClass(node.$ui, 'simcir-node-hover');
-    } );
+      if (isActiveNode(node.$ui) ) {
+        removeClass(node.$ui, 'simcir-node-hover');
+      }
+    });
     node.$ui.append($circle);
 
     if (node.label) {
@@ -193,7 +209,7 @@ var simcir = function($) {
       } else {
         removeClass(node.$ui, 'simcir-node-hot');
       }
-    } );
+    });
     return $.extend(node, {
       setValue: setValue,
       getValue: getValue
@@ -221,7 +237,7 @@ var simcir = function($) {
       super_setValue(value);
       $.each(inputs, function(i, inputNode) {
         inputNode.setValue(value);
-      } );
+      });
     };
     var connectTo = function(inNode) {
       if (inNode.getOutput() != null) {
@@ -239,7 +255,7 @@ var simcir = function($) {
       inNode.setValue(null, true);
       inputs = $.grep(inputs, function(v) {
         return v != inNode;
-      } );
+      });
     };
     var getInputs = function() {
       return inputs;
@@ -299,7 +315,7 @@ var simcir = function($) {
         var offset = (h - pitch * (nodes.length - 1) ) / 2;
         $.each(nodes, function(i, node) {
           transform(node.$ui, x, pitch * i + offset);
-        } );
+        });
       };
       layoutNodes(getInputs(), 0);
       layoutNodes(getOutputs(), w);
@@ -309,7 +325,7 @@ var simcir = function($) {
     var getImpl = function(type) {
       return device.$ui.
         children('[simcir-node-type="' + type + '"].simcir-node').
-        map(function() { return controller($(this) ); } );
+        map(function() { return controller($(this) ); });
     };
     var getInputs = function() {
       return getImpl('in');
@@ -323,12 +339,12 @@ var simcir = function($) {
         if (outNode != null) {
           outNode.disconnectFrom(inNode);
         }
-      } );
+      });
       $.each(getOutputs(), function(i, outNode) {
         $.each(outNode.getInputs(), function(i, inNode) {
           outNode.disconnectFrom(inNode);
-        } );
-      } );
+        });
+      });
     };
 
     var selected = false;
@@ -404,10 +420,10 @@ var simcir = function($) {
       transform($dev, deviceDef.x, deviceDef.y);
       $devices.push($dev);
       $devMap[deviceDef.id] = $dev;
-    } );
+    });
     $.each(data.connectors, function(i, conn) {
       connect(getNode(conn.from), getNode(conn.to) );
-    } );
+    });
     return $devices;
   };
 
@@ -430,7 +446,7 @@ var simcir = function($) {
           return (y1 < y2)? -1 : 1;
         }
         return (x1 < x2)? -1 : 1;
-      } );
+      });
       $.each($ports, function(i, $dev) {
         var deviceDef = controller($dev).deviceDef;
         var inPort;
@@ -449,8 +465,8 @@ var simcir = function($) {
         } 
         inPort.$ui.on('nodeValueChange', function() {
           outPort.setValue(inPort.getValue() );
-        } );
-      } );
+        });
+      });
       var super_getSize = device.getSize;
       device.getSize = function() {
         var size = super_getSize();
@@ -508,6 +524,8 @@ var simcir = function($) {
     };
     $bar.on('mousedown', bar_mouseDownHandler);
     var body_mouseDownHandler = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
       var off = $scrollbar.parents('svg').offset();
       var pos = transform($scrollbar);
       var y = event.pageY - off.top - pos.y;
@@ -538,7 +556,7 @@ var simcir = function($) {
         $bar.children('rect').
           attr({x: 0, y: 0, width: _width, height: _barSize * unitSize});
         transform($bar, 0, _value * unitSize);
-      } );
+      });
     };
     var calc = function(f) {
       f(_height / (_max - _min) );
@@ -571,6 +589,7 @@ var simcir = function($) {
     data = $.extend({
       width: 800,
       height: 300,
+      showToolbox: true,
       toolbox: [],
       devices: [],
       connectors: [],
@@ -579,7 +598,7 @@ var simcir = function($) {
     var workspaceWidth = data.width;
     var workspaceHeight = data.height;
     var barWidth = unit;
-    var toolboxWidth = unit * 6 + barWidth;
+    var toolboxWidth = data.showToolbox? unit * 6 + barWidth : 0;
 
     var $workspace = createSVG(
         workspaceWidth, workspaceHeight).
@@ -610,7 +629,9 @@ var simcir = function($) {
     enableEvents($connectorPane, false);
     enableEvents($temporaryPane, false);
     
-    $workspace.append($toolboxPane);
+    if (data.showToolbox) {
+      $workspace.append($toolboxPane);
+    }
     $workspace.append($devicePane);
     $workspace.append($connectorPane);
     $workspace.append($temporaryPane);
@@ -621,9 +642,11 @@ var simcir = function($) {
 
     var addDevice = function($dev) {
       $devicePane.append($dev);
+      $dev.trigger('addDevice');
     };
 
     var removeDevice = function($dev) {
+      $dev.trigger('removeDevice');
       // before remove, disconnect all
       controller($dev).disconnectAll();
       $dev.remove();
@@ -649,8 +672,8 @@ var simcir = function($) {
             $connectorPane.append(
                 createConnector(p1.x, p1.y, p2.x, p2.y) );
           }
-        } );
-      } );
+        });
+      });
     };
 
     var loadToolbox = function(data) {
@@ -662,7 +685,7 @@ var simcir = function($) {
         var size = controller($dev).getSize();
         transform($dev, (toolboxWidth - barWidth - size.width) / 2, y);
         y += (size.height + fontSize + vgap);
-      } );
+      });
       controller($scrollbar).setValues(0, 0, y, workspaceHeight);
     };
 
@@ -725,9 +748,11 @@ var simcir = function($) {
               (i + 1 < array.length? ',' : '') );
         });
       };
+
       println('{');
-      println('  "width":' + workspaceWidth + ',');
-      println('  "height":' + workspaceHeight + ',');
+      println('  "width":' + data.width + ',');
+      println('  "height":' + data.height + ',');
+      println('  "showToolbox":' + data.showToolbox + ',');
       println('  "toolbox":[');
       printArray(toolbox);
       println('  ],');
@@ -740,17 +765,13 @@ var simcir = function($) {
       print('}');
       return buf;
     };
-    
+
     //-------------------------------------------
     // mouse operations
 
     var dragMoveHandler = null;
     var dragCompleteHandler = null;
 
-    var isActiveNode = function($o) {
-      return $o.closest('.simcir-node').length == 1 &&
-        $o.closest('.simcir-toolbox').length == 0;
-    };
     var adjustDevice = function($dev) {
       var pitch = unit / 2;
       var adjust = function(v) { return Math.round(v / pitch) * pitch; };
@@ -954,7 +975,7 @@ var simcir = function($) {
     loadToolbox(data);
     $.each(buildCircuit(data), function(i, $dev) {
       addDevice($dev);
-    } );
+    });
     updateConnectors();
 
     controller($workspace, {
@@ -970,7 +991,7 @@ var simcir = function($) {
       var out1 = device.addOutput();
       device.$ui.on('inputValueChange', function() {
         out1.setValue(in1.getValue() );
-      } );
+      });
       var size = device.getSize();
       var cx = size.width / 2;
       var cy = size.height / 2;
@@ -1021,7 +1042,7 @@ var simcir = function($) {
 
       }($(this) );
     });
-  } );
+  });
 
   return {
     createSVGElement: createSVGElement,
@@ -1030,6 +1051,9 @@ var simcir = function($) {
     addClass: addClass,
     removeClass: removeClass,
     hasClass: hasClass,
+    offset: offset,
+    transform: transform,
+    enableEvents: enableEvents,
     unit: unit
   };
 }(jQuery);

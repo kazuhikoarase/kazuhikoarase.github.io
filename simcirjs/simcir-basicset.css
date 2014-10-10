@@ -26,3 +26,17 @@
   stroke-width: 1;
   fill: none;
 }
+
+.simcir-basicset-osc {
+  fill: #ffcccc;
+}
+
+.simcir-basicset-knob {
+  stroke: none;
+  fill: #333333;
+}
+
+.simcir-basicset-knob-mark {
+  stroke: #ffffff;
+  stroke-width: 3;
+}
