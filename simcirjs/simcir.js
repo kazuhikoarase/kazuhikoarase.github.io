@@ -24,6 +24,46 @@ var simcir = function($) {
     });
   };
 
+  var graphics = function($target) {
+    var attr = {};
+    var buf = '';
+    var moveTo = function(x, y) {
+      buf += ' M ' + x + ' ' + y;
+    };
+    var lineTo = function(x, y) {
+      buf += ' L ' + x + ' ' + y;
+    };
+    var curveTo = function(x1, y1, x, y) {
+      buf += ' Q ' + x1 + ' ' + y1 + ' ' + x + ' ' + y;
+    };
+    var closePath = function(close) {
+      if (close) {
+        // really close path.
+        buf += ' Z';
+      }
+      $target.append(createSVGElement('path').
+          attr('d', buf).attr(attr) );
+      buf = '';
+    };
+    var drawRect = function(x, y, width, height) {
+      $target.append(createSVGElement('rect').
+          attr({x: x, y: y, width: width, height: height}).attr(attr) );
+    };
+    var drawCircle = function(x, y, r) {
+      $target.append(createSVGElement('circle').
+          attr({cx: x, cy: y, r: r}).attr(attr) );
+    };
+    return {
+      attr: attr,
+      moveTo: moveTo,
+      lineTo: lineTo,
+      curveTo: curveTo,
+      closePath: closePath,
+      drawRect: drawRect,
+      drawCircle: drawCircle
+    };
+  };
+
   var eachClass = function($o, f) {
     var className = $o.attr('class');
     if (className) {
@@ -192,6 +232,7 @@ var simcir = function($) {
     if (node.label) {
       var $label = createLabel(node.label).
         attr('class', 'simcir-node-label');
+      enableEvents($label, false);
       if (node.type == 'in') {
         $label.attr('text-anchor', 'start').
           attr('x', 6).
@@ -472,6 +513,69 @@ var simcir = function($) {
         var size = super_getSize();
         return {width: unit * 4, height: size.height};
       };
+      device.$ui.on('dblclick', function() {
+        // open library,
+        var $closeButton = function() {
+          var r = 16;
+          var pad = 4;
+          var $btn = createSVG(r, r).
+            attr('class', 'simcir-dialog-close-button');
+          var g = graphics($btn);
+          g.drawRect(0, 0, r, r);
+          g.attr['class'] = 'simcir-dialog-close-button-symbol';
+          g.moveTo(pad, pad);
+          g.lineTo(r - pad, r - pad);
+          g.closePath();
+          g.moveTo(r - pad, pad);
+          g.lineTo(pad, r - pad);
+          g.closePath();
+          return $btn;
+        }();
+        var $placeHolder = $('<div></div>').
+          text(JSON.stringify(data) );
+        setupToPlaceHolder($placeHolder);
+        var $pad = $('<br/>').css('clear', 'both');
+        var $dlg = $('<div></div>').
+        addClass('simcir-dialog').
+          css({position:'absolute'}).
+          append($closeButton.css('float', 'right') ).
+          append($pad).
+          append($placeHolder);
+        $('BODY').append($dlg);
+        var dragPoint = null;
+        var dlg_mouseDownHandler = function(event) {
+          event.preventDefault();
+          var off = $dlg.offset();
+          dragPoint = {
+            x: event.pageX - off.left,
+            y: event.pageY - off.top};
+          $(document).on('mousemove', dlg_mouseMoveHandler);
+          $(document).on('mouseup', dlg_mouseUpHandler);
+        };
+        var dlg_mouseMoveHandler = function(event) {
+          moveTo(
+              event.pageX - dragPoint.x,
+              event.pageY - dragPoint.y);
+        };
+        var dlg_mouseUpHandler = function(event) {
+          $(document).off('mousemove', dlg_mouseMoveHandler);
+          $(document).off('mouseup', dlg_mouseUpHandler);
+        };
+        $dlg.on('mousedown', dlg_mouseDownHandler);
+        $closeButton.on('mousedown', function() {
+          $dlg.remove();
+        });
+        var w = $dlg.width();
+        var h = $dlg.height();
+        var cw = $(window).width();
+        var ch = $(window).height();
+        var x = (cw - w) / 2 + $(document).scrollLeft();
+        var y = (ch - h) / 2 + $(document).scrollTop();
+        var moveTo = function(x, y) {
+          $dlg.css({left: x + 'px', top: y + 'px'});
+        };
+        moveTo(x, y);
+      });
     };
   };
 
@@ -847,7 +951,7 @@ var simcir = function($) {
       });
       $selectedDevices = [];
     };
-    
+
     var beginMoveDevice = function(event, $target) {
       var $dev = $target.closest('.simcir-device');
       var pos = transform($dev);
@@ -857,12 +961,13 @@ var simcir = function($) {
         // to front.
         $dev.parent().append($dev.detach() );
       }
-      // disable events while dragging.
-      enableEvents($dev, false);
+
       var dragPoint = {
         x: event.pageX - pos.x,
         y: event.pageY - pos.y};
       dragMoveHandler = function(event) {
+        // disable events while dragging.
+        enableEvents($dev, false);
         var curPos = transform($dev);
         var deltaPos = {
           x: event.pageX - dragPoint.x - curPos.x,
@@ -1007,40 +1112,37 @@ var simcir = function($) {
   registerDevice('In', createPortFactory('in') );
   registerDevice('Out', createPortFactory('out') );
 
+  var setupToPlaceHolder = function($placeHolder) {
+    var $workspace = simcir.createWorkspace(
+        JSON.parse($placeHolder.text() ) );
+    var $dataArea = $('<textarea></textarea>').
+      addClass('simcir-json-data-area').
+      attr('readonly', 'readonly').
+      css('width', $workspace.attr('width') + 'px').
+      css('height', $workspace.attr('height') + 'px');
+    var showData = false;
+    var toggle = function() {
+      if (showData) {
+        $dataArea.val(controller($workspace).text() );
+      }
+      $workspace.css('display', !showData? 'inline' : 'none');
+      $dataArea.css('display', showData? 'inline' : 'none');
+      showData = !showData;
+    };
+    $placeHolder.text('');
+    $placeHolder.append($workspace);
+    $placeHolder.append($dataArea);
+    $placeHolder.on('click', function(event) {
+      if (event.ctrlKey || event.metaKey) {
+        toggle();
+      }
+    });
+    toggle();
+  };
+
   $(function() {
     $('.simcir').each(function() {
-      !function($placeHolder) {
-
-        var $workspace = simcir.createWorkspace(
-            JSON.parse($placeHolder.text() ) );
-
-        var $dataArea = $('<textarea></textarea>').
-          addClass('simcir-json-data-area').
-          attr('readonly', 'readonly').
-          css('width', $workspace.attr('width') + 'px').
-          css('height', $workspace.attr('height') + 'px');
-
-        var showData = false;
-        var toggle = function() {
-          if (showData) {
-            $dataArea.val(controller($workspace).text() );
-          }
-          $workspace.css('display', !showData? 'inline' : 'none');
-          $dataArea.css('display', showData? 'inline' : 'none');
-          showData = !showData;
-        };
-
-        $placeHolder.text('');
-        $placeHolder.append($workspace);
-        $placeHolder.append($dataArea);
-        $placeHolder.on('click', function(event) {
-          if (event.ctrlKey || event.metaKey) {
-            toggle();
-          }
-        });
-        toggle();
-
-      }($(this) );
+      setupToPlaceHolder($(this) );
     });
   });
 
@@ -1054,6 +1156,7 @@ var simcir = function($) {
     offset: offset,
     transform: transform,
     enableEvents: enableEvents,
-    unit: unit
+    unit: unit,
+    graphics: graphics
   };
 }(jQuery);

@@ -9,54 +9,14 @@
 //  http://www.opensource.org/licenses/mit-license.php
 //
 
-!function($) {
+!function($, $s) {
 
   // unit size
-  var unit = simcir.unit;
+  var unit = $s.unit;
 
   // red
   var defaultLEDColor = '#ff0000';
 
-  var graphics = function($target) {
-    var attr = {};
-    var buf = '';
-    var moveTo = function(x, y) {
-      buf += ' M ' + x + ' ' + y;
-    };
-    var lineTo = function(x, y) {
-      buf += ' L ' + x + ' ' + y;
-    };
-    var curveTo = function(x1, y1, x, y) {
-      buf += ' Q ' + x1 + ' ' + y1 + ' ' + x + ' ' + y;
-    };
-    var closePath = function(close) {
-      if (close) {
-        // really close path.
-        buf += ' Z';
-      }
-      $target.append(simcir.createSVGElement('path').
-          attr('d', buf).attr(attr) );
-      buf = '';
-    };
-    var drawRect = function(x, y, width, height) {
-      $target.append(simcir.createSVGElement('rect').
-          attr({x: x, y: y, width: width, height: height}).attr(attr) );
-    };
-    var drawCircle = function(x, y, r) {
-      $target.append(simcir.createSVGElement('circle').
-          attr({cx: x, cy: y, r: r}).attr(attr) );
-    };
-    return {
-      attr: attr,
-      moveTo: moveTo,
-      lineTo: lineTo,
-      curveTo: curveTo,
-      closePath: closePath,
-      drawRect: drawRect,
-      drawCircle: drawCircle
-    };
-  };
-  
   var multiplyColor = function() {
     var HEX = '0123456789abcdef';
     var toIColor = function(sColor) {
@@ -166,7 +126,7 @@
       var out1 = device.addOutput();
       var on = (type == 'PushOff');
       var size = device.getSize();
-      var $button = simcir.createSVGElement('rect').
+      var $button = $s.createSVGElement('rect').
         attr({x: size.width / 4, y: size.height / 4,
           width: size.width / 2, height: size.height / 2,
           rx: 2, ry: 2});
@@ -176,13 +136,13 @@
         event.stopPropagation();
         if (type == 'PushOn') {
           on = true;
-          simcir.addClass($button, 'simcir-basicset-switch-pressed');
+          $s.addClass($button, 'simcir-basicset-switch-pressed');
         } else if (type == 'PushOff') {
           on = false;
-          simcir.addClass($button, 'simcir-basicset-switch-pressed');
+          $s.addClass($button, 'simcir-basicset-switch-pressed');
         } else if (type == 'Toggle') {
           on = !on;
-          simcir.addClass($button, 'simcir-basicset-switch-pressed');
+          $s.addClass($button, 'simcir-basicset-switch-pressed');
         }
         updateOutput();
         $(document).on('mouseup', button_mouseUpHandler);
@@ -190,28 +150,28 @@
       var button_mouseUpHandler = function(event) {
         if (type == 'PushOn') {
           on = false;
-          simcir.removeClass($button, 'simcir-basicset-switch-pressed');
+          $s.removeClass($button, 'simcir-basicset-switch-pressed');
         } else if (type == 'PushOff') {
           on = true;
-          simcir.removeClass($button, 'simcir-basicset-switch-pressed');
+          $s.removeClass($button, 'simcir-basicset-switch-pressed');
         } else if (type == 'Toggle') {
           // keep state
           if (!on) {
-            simcir.removeClass($button, 'simcir-basicset-switch-pressed');
+            $s.removeClass($button, 'simcir-basicset-switch-pressed');
           }
         }
         updateOutput();
         $(document).off('mouseup', button_mouseUpHandler);
       };
       device.$ui.on('addDevice', function() {
-        simcir.enableEvents($button, true);
+        $s.enableEvents($button, true);
         $button.on('mousedown', button_mouseDownHandler);
       });
       device.$ui.on('removeDevice', function() {
-        simcir.enableEvents($button, false);
+        $s.enableEvents($button, false);
         $button.off('mousedown', button_mouseDownHandler);
       });
-      simcir.addClass(device.$ui, 'simcir-basicset-switch');
+      $s.addClass(device.$ui, 'simcir-basicset-switch');
       device.$ui.on('inputValueChange', function() {
         if (on) {
           out1.setValue(in1.getValue() );
@@ -246,7 +206,7 @@
       });
       device.halfPitch = inputs.length > 2;
       var size = device.getSize();
-      var g = graphics(device.$ui);
+      var g = $s.graphics(device.$ui);
       g.attr['class'] = 'simcir-basicset-symbol';
       draw(g, 
         (size.width - unit) / 2,
@@ -266,6 +226,7 @@
     };
   };
   */
+
   var _7Seg = function() {
     var _SEGMENT_DATA = {
       a: [575, 138, 494, 211, 249, 211, 194, 137, 213, 120, 559, 120],
@@ -399,7 +360,7 @@
       var tx = (size.width - seg.width * scale) / 2;
       var ty = (size.height - seg.height * scale) / 2;
 
-      var $seg = simcir.createSVGElement('g').
+      var $seg = $s.createSVGElement('g').
         attr('transform', 'translate(' + tx + ' ' + ty + ')' +
             ' scale(' + scale + ') ');
       device.$ui.append($seg);
@@ -412,7 +373,7 @@
           }
         }
         $seg.children().remove();
-        drawSeg(seg, graphics($seg), segs, hiColor, loColor, '#000000');
+        drawSeg(seg, $s.graphics($seg), segs, hiColor, loColor, '#000000');
       };
       device.$ui.on('inputValueChange', update);
       update();
@@ -468,7 +429,7 @@
       var tx = (size.width - seg.width * scale) / 2;
       var ty = (size.height - seg.height * scale) / 2;
 
-      var $seg = simcir.createSVGElement('g').
+      var $seg = $s.createSVGElement('g').
         attr('transform', 'translate(' + tx + ' ' + ty + ')' +
             ' scale(' + scale + ') ');
       device.$ui.append($seg);
@@ -481,7 +442,7 @@
           }
         }
         $seg.children().remove();
-        drawSeg(seg, graphics($seg), getPattern(value),
+        drawSeg(seg, $s.graphics($seg), getPattern(value),
             hiColor, loColor, '#000000');
       };
       device.$ui.on('inputValueChange', update);
@@ -515,12 +476,12 @@
       };
       var size = device.getSize();
 
-      var $knob = simcir.createSVGElement('g').
+      var $knob = $s.createSVGElement('g').
         attr('class', 'simcir-basicset-knob').
-        append(simcir.createSVGElement('rect').
+        append($s.createSVGElement('rect').
             attr({x:-10,y:-10,width:20,height:20}));
       var r = Math.min(size.width, size.height) / 4 * 1.5;
-      var g = graphics($knob);
+      var g = $s.graphics($knob);
       g.drawCircle(0, 0, r);
       g.attr['class'] = 'simcir-basicset-knob-mark';
       g.moveTo(0, 0);
@@ -544,7 +505,7 @@
       };
       var knob_mouseMoveHandler = function(event) {
         var off = $knob.parents('svg').offset();
-        var pos = simcir.offset($knob);
+        var pos = $s.offset($knob);
         var cx = off.left + pos.x;
         var cy = off.top + pos.y;
         var dx = event.pageX - cx;
@@ -557,16 +518,16 @@
         $(document).off('mouseup', knob_mouseUpHandler);
       };
       device.$ui.on('addDevice', function() {
-        simcir.enableEvents($knob, true);
+        $s.enableEvents($knob, true);
         $knob.on('mousedown', knob_mouseDownHandler);
       });
       device.$ui.on('removeDevice', function() {
-        simcir.enableEvents($knob, false);
+        $s.enableEvents($knob, false);
         $knob.off('mousedown', knob_mouseDownHandler);
       });
 
       var update = function() {
-        simcir.transform($knob, size.width / 2,
+        $s.transform($knob, size.width / 2,
             size.height / 2, _angle + 90);
         var max = 1 << numOutputs;
         var value = Math.min( ( (_angle - _MIN_ANGLE) /
@@ -582,18 +543,18 @@
   };
 
   // register direct current source
-  simcir.registerDevice('DC', function(device) {
+  $s.registerDevice('DC', function(device) {
     device.addOutput().setValue(onValue);
-    simcir.addClass(device.$ui, 'simcir-basicset-osc');
+    $s.addClass(device.$ui, 'simcir-basicset-osc');
   });
 
   // register simple LED
-  simcir.registerDevice('LED', function(device) {
+  $s.registerDevice('LED', function(device) {
     var hiColor = device.deviceDef.color || defaultLEDColor;
     var loColor = multiplyColor(hiColor, 0.25);
     var in1 = device.addInput();
     var size = device.getSize();
-    var $led = simcir.createSVGElement('circle').
+    var $led = $s.createSVGElement('circle').
       attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4}).
       attr('stroke', 'none').
       attr('fill', loColor);
@@ -604,22 +565,22 @@
   });
 
   // register switches
-  simcir.registerDevice('PushOff', createSwitchFactory('PushOff') );
-  simcir.registerDevice('PushOn', createSwitchFactory('PushOn') );
-  simcir.registerDevice('Toggle', createSwitchFactory('Toggle') );
+  $s.registerDevice('PushOff', createSwitchFactory('PushOff') );
+  $s.registerDevice('PushOn', createSwitchFactory('PushOn') );
+  $s.registerDevice('Toggle', createSwitchFactory('Toggle') );
 
   // register logic gates
-  simcir.registerDevice('BUF', createLogicGateFactory(null, BUF, drawBUF) );
-  simcir.registerDevice('NOT', createLogicGateFactory(null, NOT, drawNOT) );
-  simcir.registerDevice('AND', createLogicGateFactory(AND, BUF, drawAND) );
-  simcir.registerDevice('NAND', createLogicGateFactory(AND, NOT, drawNAND) );
-  simcir.registerDevice('OR', createLogicGateFactory(OR, BUF, drawOR) );
-  simcir.registerDevice('NOR', createLogicGateFactory(OR, NOT, drawNOR) );
-  simcir.registerDevice('EOR', createLogicGateFactory(EOR, BUF, drawEOR) );
-  simcir.registerDevice('ENOR', createLogicGateFactory(EOR, NOT, drawENOR) );
+  $s.registerDevice('BUF', createLogicGateFactory(null, BUF, drawBUF) );
+  $s.registerDevice('NOT', createLogicGateFactory(null, NOT, drawNOT) );
+  $s.registerDevice('AND', createLogicGateFactory(AND, BUF, drawAND) );
+  $s.registerDevice('NAND', createLogicGateFactory(AND, NOT, drawNAND) );
+  $s.registerDevice('OR', createLogicGateFactory(OR, BUF, drawOR) );
+  $s.registerDevice('NOR', createLogicGateFactory(OR, NOT, drawNOR) );
+  $s.registerDevice('EOR', createLogicGateFactory(EOR, BUF, drawEOR) );
+  $s.registerDevice('ENOR', createLogicGateFactory(EOR, NOT, drawENOR) );
 
   // register Oscillator
-  simcir.registerDevice('OSC', function(device) {
+  $s.registerDevice('OSC', function(device) {
     var out1 = device.addOutput();
     var timerId = null;
     var on = false;
@@ -635,18 +596,18 @@
         timerId = null;
       }
     });
-    simcir.addClass(device.$ui, 'simcir-basicset-dc');
+    $s.addClass(device.$ui, 'simcir-basicset-dc');
   });
 
   // register LED seg
-  simcir.registerDevice('7seg', createLEDSegFactory(_7Seg) );
-  simcir.registerDevice('16seg', createLEDSegFactory(_16Seg) );
-  simcir.registerDevice('4bit7seg', createLED4bitFactory() );
+  $s.registerDevice('7seg', createLEDSegFactory(_7Seg) );
+  $s.registerDevice('16seg', createLEDSegFactory(_16Seg) );
+  $s.registerDevice('4bit7seg', createLED4bitFactory() );
 
   // register Rotary Encoder
-  simcir.registerDevice('RotaryEncoder', createRotaryEncoderFactory() );
+  $s.registerDevice('RotaryEncoder', createRotaryEncoderFactory() );
 
-  simcir.registerDevice('BusIn', function(device) {
+  $s.registerDevice('BusIn', function(device) {
     var numOutputs = Math.max(2, device.deviceDef.numOutputs || 8);
     device.halfPitch = true;
     device.addInput();
@@ -665,7 +626,7 @@
     });
   });
 
-  simcir.registerDevice('BusOut', function(device) {
+  $s.registerDevice('BusOut', function(device) {
     var numInputs = Math.max(2, device.deviceDef.numInputs || 8);
     device.halfPitch = true;
     for (var i = 0; i < numInputs; i += 1) {
@@ -687,4 +648,4 @@
     });
   });
 
-}(jQuery);
+}(jQuery, simcir);

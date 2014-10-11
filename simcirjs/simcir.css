@@ -103,3 +103,28 @@
   border-style: solid;
   border-color: #000000;
 }
+
+.simcir-dialog {
+  padding: 4px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #ffffff;
+  -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+     -moz-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+          box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+}
+.simcir-dialog-title {
+  background-color: #f0f0f0;	
+}
+
+.simcir-dialog-close-button {
+  fill: #666666;
+  stroke: none;
+}
+
+.simcir-dialog-close-button-symbol {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
