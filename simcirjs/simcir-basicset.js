@@ -300,8 +300,8 @@
         var numPoints = data.length / 2;
         g.attr['fill'] = color;
         for (var i = 0; i < numPoints; i += 1) {
-          var x = Number = data[i * 2];
-          var y = Number = data[i * 2 + 1];
+          var x = data[i * 2];
+          var y = data[i * 2 + 1];
           if (i == 0) {
             g.moveTo(x, y);
           } else {
