@@ -532,6 +532,7 @@ var simcir = function($) {
           return $btn;
         }();
         var $placeHolder = $('<div></div>').
+          addClass('simcir').
           text(JSON.stringify(data) );
         setupToPlaceHolder($placeHolder);
         var $pad = $('<br/>').css('clear', 'both');
@@ -544,7 +545,12 @@ var simcir = function($) {
         $('BODY').append($dlg);
         var dragPoint = null;
         var dlg_mouseDownHandler = function(event) {
+          if (!$(event.target).hasClass('simcir-dialog') ) {
+            return;
+          }
           event.preventDefault();
+          $dlg.detach();
+          $('BODY').append($dlg);
           var off = $dlg.offset();
           dragPoint = {
             x: event.pageX - off.left,
@@ -1038,8 +1044,9 @@ var simcir = function($) {
     };
 
     var mouseDownHandler = function(event) {
-      var $target = $(event.target);
       event.preventDefault();
+      event.stopPropagation();
+      var $target = $(event.target);
       if (isActiveNode($target) ) {
         beginConnect(event, $target);
       } else if ($target.closest('.simcir-device').length == 1) {
