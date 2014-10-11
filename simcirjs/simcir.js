@@ -531,23 +531,26 @@ var simcir = function($) {
           g.closePath();
           return $btn;
         }();
+        var $title = $('<div></div>').text(
+            device.deviceDef.label || device.deviceDef.type).
+          css('cursor', 'default').
+          on('mousedown', function(event) {
+          event.preventDefault();
+        });
         var $placeHolder = $('<div></div>').
           addClass('simcir').
           text(JSON.stringify(data) );
         setupToPlaceHolder($placeHolder);
-        var $pad = $('<br/>').css('clear', 'both');
         var $dlg = $('<div></div>').
-        addClass('simcir-dialog').
+          addClass('simcir-dialog').
           css({position:'absolute'}).
+          append($title.css('float', 'left') ).
           append($closeButton.css('float', 'right') ).
-          append($pad).
+          append($('<br/>').css('clear', 'both') ).
           append($placeHolder);
         $('BODY').append($dlg);
         var dragPoint = null;
         var dlg_mouseDownHandler = function(event) {
-          if (!$(event.target).hasClass('simcir-dialog') ) {
-            return;
-          }
           event.preventDefault();
           $dlg.detach();
           $('BODY').append($dlg);
