@@ -531,8 +531,9 @@ var simcir = function($) {
           g.closePath();
           return $btn;
         }();
-        var $title = $('<div></div>').text(
-            device.deviceDef.label || device.deviceDef.type).
+        var $title = $('<div></div>').
+          addClass('simcir-dialog-title').
+          text(device.deviceDef.label || device.deviceDef.type).
           css('cursor', 'default').
           on('mousedown', function(event) {
           event.preventDefault();
@@ -551,6 +552,10 @@ var simcir = function($) {
         $('BODY').append($dlg);
         var dragPoint = null;
         var dlg_mouseDownHandler = function(event) {
+          if (!$(event.target).hasClass('simcir-dialog') &&
+              !$(event.target).hasClass('simcir-dialog-title') ) {
+            return;
+          }
           event.preventDefault();
           $dlg.detach();
           $('BODY').append($dlg);
