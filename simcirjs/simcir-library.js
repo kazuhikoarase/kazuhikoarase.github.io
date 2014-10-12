@@ -13,12 +13,13 @@
 //  RS-FF
 //  JK-FF
 //  T-FF
+//  8bitCounter
 
 simcir.registerDevice('RS-FF',
 {
-  "width":600,
+  "width":500,
   "height":200,
-  "showToolbox":false,
+  "showToolbox":true,
   "toolbox":[
     {"type":"In"},
     {"type":"Out"},
@@ -29,15 +30,15 @@ simcir.registerDevice('RS-FF',
     {"type":"NAND"}
   ],
   "devices":[
-    {"type":"In","id":"dev0","x":216,"y":112,"label":"~R"},
-    {"type":"NAND","id":"dev1","x":264,"y":56,"label":"NAND"},
-    {"type":"Out","id":"dev2","x":312,"y":56,"label":"Q"},
-    {"type":"Out","id":"dev3","x":312,"y":104,"label":"~Q"},
-    {"type":"DC","id":"dev4","x":104,"y":80,"label":"DC"},
-    {"type":"PushOff","id":"dev5","x":160,"y":48,"label":"PushOff"},
-    {"type":"PushOff","id":"dev6","x":160,"y":112,"label":"PushOff"},
-    {"type":"In","id":"dev7","x":216,"y":48,"label":"~S"},
-    {"type":"NAND","id":"dev8","x":264,"y":104,"label":"NAND"}
+    {"type":"In","id":"dev0","x":176,"y":112,"label":"~R"},
+    {"type":"NAND","id":"dev1","x":224,"y":56,"label":"NAND"},
+    {"type":"Out","id":"dev2","x":272,"y":56,"label":"Q"},
+    {"type":"Out","id":"dev3","x":272,"y":104,"label":"~Q"},
+    {"type":"DC","id":"dev4","x":64,"y":80,"label":"DC"},
+    {"type":"PushOff","id":"dev5","x":120,"y":48,"label":"PushOff"},
+    {"type":"PushOff","id":"dev6","x":120,"y":112,"label":"PushOff"},
+    {"type":"In","id":"dev7","x":176,"y":48,"label":"~S"},
+    {"type":"NAND","id":"dev8","x":224,"y":104,"label":"NAND"}
   ],
   "connectors":[
     {"from":"dev0.in0","to":"dev6.out0"},

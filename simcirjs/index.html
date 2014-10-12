@@ -29,7 +29,6 @@
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
-
 <div style="margin:16px 0px 16px 0px">
   SimcirJS(a.k.a. Simcir) is a circuit simulator in HTML5 and JavaScript.
 </div>
@@ -41,6 +40,7 @@
   <li>Click an input node to disconnect.</li>
   <li>Move a device back to the toolbox if you don't use.</li>
   <li>Ctrl+Click(Mac:command+Click) to toggle view (Live circuit or JSON data).</li>
+  <li>Double-Click a library to open the circuit inside.</li>
 </ul>
 
 <div class="simcir">
@@ -78,15 +78,15 @@
 }
 </div>
 
-<h3>RS-FF</h3>
+<h3>Reuse a circuit</h3>
 <p>
 To reuse a circuit as library, use In and Out.
 </p>
 <div class="simcir">
 {
-  "width":600,
+  "width":500,
   "height":200,
-  "showToolbox":false,
+  "showToolbox":true,
   "toolbox":[
     {"type":"In"},
     {"type":"Out"},
@@ -97,15 +97,15 @@ To reuse a circuit as library, use In and Out.
     {"type":"NAND"}
   ],
   "devices":[
-    {"type":"In","id":"dev0","x":216,"y":112,"label":"~R"},
-    {"type":"NAND","id":"dev1","x":264,"y":56,"label":"NAND"},
-    {"type":"Out","id":"dev2","x":312,"y":56,"label":"Q"},
-    {"type":"Out","id":"dev3","x":312,"y":104,"label":"~Q"},
-    {"type":"DC","id":"dev4","x":104,"y":80,"label":"DC"},
-    {"type":"PushOff","id":"dev5","x":160,"y":48,"label":"PushOff"},
-    {"type":"PushOff","id":"dev6","x":160,"y":112,"label":"PushOff"},
-    {"type":"In","id":"dev7","x":216,"y":48,"label":"~S"},
-    {"type":"NAND","id":"dev8","x":264,"y":104,"label":"NAND"}
+    {"type":"In","id":"dev0","x":176,"y":112,"label":"~R"},
+    {"type":"NAND","id":"dev1","x":224,"y":56,"label":"NAND"},
+    {"type":"Out","id":"dev2","x":272,"y":56,"label":"Q"},
+    {"type":"Out","id":"dev3","x":272,"y":104,"label":"~Q"},
+    {"type":"DC","id":"dev4","x":64,"y":80,"label":"DC"},
+    {"type":"PushOff","id":"dev5","x":120,"y":48,"label":"PushOff"},
+    {"type":"PushOff","id":"dev6","x":120,"y":112,"label":"PushOff"},
+    {"type":"In","id":"dev7","x":176,"y":48,"label":"~S"},
+    {"type":"NAND","id":"dev8","x":224,"y":104,"label":"NAND"}
   ],
   "connectors":[
     {"from":"dev0.in0","to":"dev6.out0"},
@@ -121,8 +121,6 @@ To reuse a circuit as library, use In and Out.
   ]
 }
 </div>
-
-<h3>Reuse a circuit</h3>
 
 <div class="simcir">
 {
