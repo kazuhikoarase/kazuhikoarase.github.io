@@ -327,6 +327,7 @@
   }();
 
   var drawSeg = function(seg, g, pattern, hiColor, loColor, bgColor) {
+    g.attr['stroke'] = 'none';
     if (bgColor) {
       g.attr['fill'] = bgColor;
       g.drawRect(0, 0, seg.width, seg.height);
