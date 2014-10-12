@@ -125,53 +125,57 @@
       var in1 = device.addInput();
       var out1 = device.addOutput();
       var on = (type == 'PushOff');
-      var size = device.getSize();
-      var $button = $s.createSVGElement('rect').
-        attr({x: size.width / 4, y: size.height / 4,
-          width: size.width / 2, height: size.height / 2,
-          rx: 2, ry: 2});
-      device.$ui.append($button);
-      var button_mouseDownHandler = function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (type == 'PushOn') {
-          on = true;
-          $s.addClass($button, 'simcir-basicset-switch-pressed');
-        } else if (type == 'PushOff') {
-          on = false;
-          $s.addClass($button, 'simcir-basicset-switch-pressed');
-        } else if (type == 'Toggle') {
-          on = !on;
-          $s.addClass($button, 'simcir-basicset-switch-pressed');
-        }
-        updateOutput();
-        $(document).on('mouseup', button_mouseUpHandler);
-      };
-      var button_mouseUpHandler = function(event) {
-        if (type == 'PushOn') {
-          on = false;
-          $s.removeClass($button, 'simcir-basicset-switch-pressed');
-        } else if (type == 'PushOff') {
-          on = true;
-          $s.removeClass($button, 'simcir-basicset-switch-pressed');
-        } else if (type == 'Toggle') {
-          // keep state
-          if (!on) {
-            $s.removeClass($button, 'simcir-basicset-switch-pressed');
+
+      if (!device.headless) {
+        var size = device.getSize();
+        var $button = $s.createSVGElement('rect').
+          attr({x: size.width / 4, y: size.height / 4,
+            width: size.width / 2, height: size.height / 2,
+            rx: 2, ry: 2});
+        device.$ui.append($button);
+        var button_mouseDownHandler = function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (type == 'PushOn') {
+            on = true;
+            $s.addClass($button, 'simcir-basicset-switch-pressed');
+          } else if (type == 'PushOff') {
+            on = false;
+            $s.addClass($button, 'simcir-basicset-switch-pressed');
+          } else if (type == 'Toggle') {
+            on = !on;
+            $s.addClass($button, 'simcir-basicset-switch-pressed');
           }
-        }
-        updateOutput();
-        $(document).off('mouseup', button_mouseUpHandler);
-      };
-      device.$ui.on('addDevice', function() {
-        $s.enableEvents($button, true);
-        $button.on('mousedown', button_mouseDownHandler);
-      });
-      device.$ui.on('removeDevice', function() {
-        $s.enableEvents($button, false);
-        $button.off('mousedown', button_mouseDownHandler);
-      });
-      $s.addClass(device.$ui, 'simcir-basicset-switch');
+          updateOutput();
+          $(document).on('mouseup', button_mouseUpHandler);
+        };
+        var button_mouseUpHandler = function(event) {
+          if (type == 'PushOn') {
+            on = false;
+            $s.removeClass($button, 'simcir-basicset-switch-pressed');
+          } else if (type == 'PushOff') {
+            on = true;
+            $s.removeClass($button, 'simcir-basicset-switch-pressed');
+          } else if (type == 'Toggle') {
+            // keep state
+            if (!on) {
+              $s.removeClass($button, 'simcir-basicset-switch-pressed');
+            }
+          }
+          updateOutput();
+          $(document).off('mouseup', button_mouseUpHandler);
+        };
+        device.$ui.on('addDevice', function() {
+          $s.enableEvents($button, true);
+          $button.on('mousedown', button_mouseDownHandler);
+        });
+        device.$ui.on('removeDevice', function() {
+          $s.enableEvents($button, false);
+          $button.off('mousedown', button_mouseDownHandler);
+        });
+        $s.addClass(device.$ui, 'simcir-basicset-switch');
+      }
+
       device.$ui.on('inputValueChange', function() {
         if (on) {
           out1.setValue(in1.getValue() );
@@ -204,14 +208,16 @@
         b = out(b);
         outputs[0].setValue( (b == 1)? 1 : null);
       });
-      device.halfPitch = inputs.length > 2;
-      var size = device.getSize();
-      var g = $s.graphics(device.$ui);
-      g.attr['class'] = 'simcir-basicset-symbol';
-      draw(g, 
-        (size.width - unit) / 2,
-        (size.height - unit) / 2,
-        unit, unit);
+      if (!device.headless) {
+        device.halfPitch = inputs.length > 2;
+        var size = device.getSize();
+        var g = $s.graphics(device.$ui);
+        g.attr['class'] = 'simcir-basicset-symbol';
+        draw(g, 
+          (size.width - unit) / 2,
+          (size.height - unit) / 2,
+          unit, unit);
+      }
     };
   };
 
@@ -545,23 +551,27 @@
   // register direct current source
   $s.registerDevice('DC', function(device) {
     device.addOutput().setValue(onValue);
-    $s.addClass(device.$ui, 'simcir-basicset-osc');
+    if (!device.headless) {
+      $s.addClass(device.$ui, 'simcir-basicset-osc');
+    }
   });
 
   // register simple LED
   $s.registerDevice('LED', function(device) {
-    var hiColor = device.deviceDef.color || defaultLEDColor;
-    var loColor = multiplyColor(hiColor, 0.25);
     var in1 = device.addInput();
-    var size = device.getSize();
-    var $led = $s.createSVGElement('circle').
-      attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4}).
-      attr('stroke', 'none').
-      attr('fill', loColor);
-    device.$ui.append($led);
-    device.$ui.on('inputValueChange', function() {
-      $led.attr('fill', isHot(in1.getValue() )? hiColor : loColor);
-    });
+    if (!device.headless) {
+      var hiColor = device.deviceDef.color || defaultLEDColor;
+      var loColor = multiplyColor(hiColor, 0.25);
+      var size = device.getSize();
+      var $led = $s.createSVGElement('circle').
+        attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4}).
+        attr('stroke', 'none').
+        attr('fill', loColor);
+      device.$ui.append($led);
+      device.$ui.on('inputValueChange', function() {
+        $led.attr('fill', isHot(in1.getValue() )? hiColor : loColor);
+      });
+    }
   });
 
   // register switches
@@ -596,7 +606,9 @@
         timerId = null;
       }
     });
-    $s.addClass(device.$ui, 'simcir-basicset-dc');
+    if (!device.headless) {
+      $s.addClass(device.$ui, 'simcir-basicset-dc');
+    }
   });
 
   // register LED seg
