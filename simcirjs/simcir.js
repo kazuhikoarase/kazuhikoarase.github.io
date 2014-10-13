@@ -416,6 +416,19 @@ var simcir = function($) {
       return selected;
     };
 
+    var label = device.deviceDef.label;
+    var defaultLabel = device.deviceDef.type;
+    if (typeof label == 'undefined') {
+      label = defaultLabel;
+    }
+    var setLabel = function(value) {
+      label = value || defaultLabel;
+      $label.text(label);
+    };
+    var getLabel = function() {
+      return label;
+    };
+
     if (!device.headless) {
 
       device.$ui.attr('class', 'simcir-device');
@@ -423,13 +436,32 @@ var simcir = function($) {
       var $rect = createSVGElement('rect').attr('rx', 2).attr('ry', 2);
       device.$ui.append($rect);
 
-      var label = device.deviceDef.label;
-      if (typeof label == 'undefined') {
-        label = device.deviceDef.type;
-      }
       var $label = createLabel(label).
         attr('class', 'simcir-device-label').
         attr('text-anchor', 'middle');
+      $label.on('dblclick', function() {
+        // open library,
+        event.preventDefault();
+        event.stopPropagation();
+        var title = 'Enter device name ';
+        var $labelEditor = $('<input type="text"/>').
+        addClass('simcir-label-editor').
+        val($label.text() ).
+        on('keydown', function(event) {
+          if (event.keyCode == 13) {
+            // ENTER
+            setLabel($(this).val() );
+            $dlg.remove();
+          } else if (event.keyCode == 27) {
+            // ESC
+            $dlg.remove();
+          }
+        } );
+        var $placeHolder = $('<div></div>').
+          append($labelEditor);
+        var $dlg = showDialog(title, $placeHolder);
+        $labelEditor.focus();
+      });
       device.$ui.append($label);
     }
 
@@ -441,6 +473,7 @@ var simcir = function($) {
       disconnectAll: disconnectAll,
       setSelected: setSelected,
       isSelected: isSelected,
+      getLabel: getLabel,
       getSize: getSize,
       doLayout: doLayout,
       halfPitch: false
@@ -490,6 +523,80 @@ var simcir = function($) {
     return $devices;
   };
 
+  var showDialog = function(title, $content) {
+    var $closeButton = function() {
+      var r = 16;
+      var pad = 4;
+      var $btn = createSVG(r, r).
+        attr('class', 'simcir-dialog-close-button');
+      var g = graphics($btn);
+      g.drawRect(0, 0, r, r);
+      g.attr['class'] = 'simcir-dialog-close-button-symbol';
+      g.moveTo(pad, pad);
+      g.lineTo(r - pad, r - pad);
+      g.closePath();
+      g.moveTo(r - pad, pad);
+      g.lineTo(pad, r - pad);
+      g.closePath();
+      return $btn;
+    }();
+    var $title = $('<div></div>').
+      addClass('simcir-dialog-title').
+      text(title).
+      css('cursor', 'default').
+      on('mousedown', function(event) {
+      event.preventDefault();
+    });
+    var $dlg = $('<div></div>').
+      addClass('simcir-dialog').
+      css({position:'absolute'}).
+      append($title.css('float', 'left') ).
+      append($closeButton.css('float', 'right') ).
+      append($('<br/>').css('clear', 'both') ).
+      append($content);
+    $('BODY').append($dlg);
+    var dragPoint = null;
+    var dlg_mouseDownHandler = function(event) {
+      if (!$(event.target).hasClass('simcir-dialog') &&
+          !$(event.target).hasClass('simcir-dialog-title') ) {
+        return;
+      }
+      event.preventDefault();
+      $dlg.detach();
+      $('BODY').append($dlg);
+      var off = $dlg.offset();
+      dragPoint = {
+        x: event.pageX - off.left,
+        y: event.pageY - off.top};
+      $(document).on('mousemove', dlg_mouseMoveHandler);
+      $(document).on('mouseup', dlg_mouseUpHandler);
+    };
+    var dlg_mouseMoveHandler = function(event) {
+      moveTo(
+          event.pageX - dragPoint.x,
+          event.pageY - dragPoint.y);
+    };
+    var dlg_mouseUpHandler = function(event) {
+      $(document).off('mousemove', dlg_mouseMoveHandler);
+      $(document).off('mouseup', dlg_mouseUpHandler);
+    };
+    $dlg.on('mousedown', dlg_mouseDownHandler);
+    $closeButton.on('mousedown', function() {
+      $dlg.remove();
+    });
+    var w = $dlg.width();
+    var h = $dlg.height();
+    var cw = $(window).width();
+    var ch = $(window).height();
+    var x = (cw - w) / 2 + $(document).scrollLeft();
+    var y = (ch - h) / 2 + $(document).scrollTop();
+    var moveTo = function(x, y) {
+      $dlg.css({left: x + 'px', top: y + 'px'});
+    };
+    moveTo(x, y);
+    return $dlg;
+  };
+
   var createDeviceRefFactory = function(data) {
     return function(device) {
       var $devs = buildCircuit(data, true);
@@ -535,82 +642,14 @@ var simcir = function($) {
         var size = super_getSize();
         return {width: unit * 4, height: size.height};
       };
-      device.$ui.on('dblclick', function() {
+      device.$ui.on('dblclick', function(event) {
         // open library,
-        var $closeButton = function() {
-          var r = 16;
-          var pad = 4;
-          var $btn = createSVG(r, r).
-            attr('class', 'simcir-dialog-close-button');
-          var g = graphics($btn);
-          g.drawRect(0, 0, r, r);
-          g.attr['class'] = 'simcir-dialog-close-button-symbol';
-          g.moveTo(pad, pad);
-          g.lineTo(r - pad, r - pad);
-          g.closePath();
-          g.moveTo(r - pad, pad);
-          g.lineTo(pad, r - pad);
-          g.closePath();
-          return $btn;
-        }();
-        var $title = $('<div></div>').
-          addClass('simcir-dialog-title').
-          text(device.deviceDef.label || device.deviceDef.type).
-          css('cursor', 'default').
-          on('mousedown', function(event) {
-          event.preventDefault();
-        });
+        var title = device.deviceDef.label || device.deviceDef.type;
         var $placeHolder = $('<div></div>').
           addClass('simcir').
           text(JSON.stringify(data) );
         setupToPlaceHolder($placeHolder);
-        var $dlg = $('<div></div>').
-          addClass('simcir-dialog').
-          css({position:'absolute'}).
-          append($title.css('float', 'left') ).
-          append($closeButton.css('float', 'right') ).
-          append($('<br/>').css('clear', 'both') ).
-          append($placeHolder);
-        $('BODY').append($dlg);
-        var dragPoint = null;
-        var dlg_mouseDownHandler = function(event) {
-          if (!$(event.target).hasClass('simcir-dialog') &&
-              !$(event.target).hasClass('simcir-dialog-title') ) {
-            return;
-          }
-          event.preventDefault();
-          $dlg.detach();
-          $('BODY').append($dlg);
-          var off = $dlg.offset();
-          dragPoint = {
-            x: event.pageX - off.left,
-            y: event.pageY - off.top};
-          $(document).on('mousemove', dlg_mouseMoveHandler);
-          $(document).on('mouseup', dlg_mouseUpHandler);
-        };
-        var dlg_mouseMoveHandler = function(event) {
-          moveTo(
-              event.pageX - dragPoint.x,
-              event.pageY - dragPoint.y);
-        };
-        var dlg_mouseUpHandler = function(event) {
-          $(document).off('mousemove', dlg_mouseMoveHandler);
-          $(document).off('mouseup', dlg_mouseUpHandler);
-        };
-        $dlg.on('mousedown', dlg_mouseDownHandler);
-        $closeButton.on('mousedown', function() {
-          $dlg.remove();
-        });
-        var w = $dlg.width();
-        var h = $dlg.height();
-        var cw = $(window).width();
-        var ch = $(window).height();
-        var x = (cw - w) / 2 + $(document).scrollLeft();
-        var y = (ch - h) / 2 + $(document).scrollTop();
-        var moveTo = function(x, y) {
-          $dlg.css({left: x + 'px', top: y + 'px'});
-        };
-        moveTo(x, y);
+        showDialog(title, $placeHolder);
       });
     };
   };
@@ -870,9 +909,7 @@ var simcir = function($) {
         deviceDef.id = device.id;
         deviceDef.x = pos.x;
         deviceDef.y = pos.y;
-        if (typeof deviceDef.label == 'undefined') {
-          deviceDef.label = deviceDef.type;
-        }
+        deviceDef.label = device.getLabel();
         devices.push(deviceDef);
       });
 

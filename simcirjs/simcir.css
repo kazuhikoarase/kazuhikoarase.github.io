@@ -116,6 +116,7 @@
 }
 
 .simcir-dialog-title {
+  margin-right: 4px;
 }
 
 .simcir-dialog-close-button {
@@ -127,4 +128,18 @@
   fill: none;
   stroke: #ffffff;
   stroke-width: 2;
+}
+
+.simcir-label-editor {
+  width: 100px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #f0f0f0;
+  outline: none;
+}
+
+.simcir-label-editor::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
 }
