@@ -1223,6 +1223,7 @@ var simcir = function($) {
       }
     });
     toggle();
+    return $workspace;
   };
 
   $(function() {
@@ -1234,7 +1235,9 @@ var simcir = function($) {
   return {
     createSVGElement: createSVGElement,
     createWorkspace: createWorkspace,
+    setupToPlaceHolder: setupToPlaceHolder,
     registerDevice: registerDevice,
+    controller: controller,
     addClass: addClass,
     removeClass: removeClass,
     hasClass: hasClass,
