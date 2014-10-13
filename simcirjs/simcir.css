@@ -124,6 +124,11 @@
   stroke: none;
 }
 
+.simcir-dialog-close-button:hover {
+  fill: #888888;
+  stroke: none;
+}
+
 .simcir-dialog-close-button-symbol {
   fill: none;
   stroke: #ffffff;
