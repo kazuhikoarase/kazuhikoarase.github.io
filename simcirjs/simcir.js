@@ -422,6 +422,7 @@ var simcir = function($) {
       label = defaultLabel;
     }
     var setLabel = function(value) {
+      value = value.replace(/^\s+|\s+$/g, '');
       label = value || defaultLabel;
       $label.text(label);
     };
