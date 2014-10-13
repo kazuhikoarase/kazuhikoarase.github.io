@@ -440,7 +440,7 @@ var simcir = function($) {
       var $label = createLabel(label).
         attr('class', 'simcir-device-label').
         attr('text-anchor', 'middle');
-      $label.on('dblclick', function() {
+      var label_dblClickHandler = function() {
         // open library,
         event.preventDefault();
         event.stopPropagation();
@@ -462,7 +462,14 @@ var simcir = function($) {
           append($labelEditor);
         var $dlg = showDialog(title, $placeHolder);
         $labelEditor.focus();
-      });
+      };
+      device.$ui.on('addDevice', function() {
+        $label.on('dblclick', label_dblClickHandler);
+      } );
+      device.$ui.on('removeDevice', function() {
+        console.log('remove');
+        $label.off('dblclick', label_dblClickHandler);
+      } );
       device.$ui.append($label);
     }
 
