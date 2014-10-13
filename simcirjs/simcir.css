@@ -139,7 +139,8 @@
   width: 100px;
   border-width: 1px;
   border-style: solid;
-  border-color: #f0f0f0;
+  border-color: #cccccc;
+  background-color: #f0f0f0;
   outline: none;
 }
 
