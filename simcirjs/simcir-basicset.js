@@ -351,39 +351,41 @@
       for (var i = 0; i < allSegs.length; i += 1) {
         device.addInput();
       }
-      var super_getSize = device.getSize;
-      device.getSize = function() {
-        var size = super_getSize();
-        return {width: unit * 4, height: size.height};
-      };
-
-      var size = device.getSize();
-      var sw = seg.width;
-      var sh = seg.height;
-      var dw = size.width - unit;
-      var dh = size.height - unit;
-
-      var scale = (sw / sh > dw / dh)? dw / sw : dh / sh;
-      var tx = (size.width - seg.width * scale) / 2;
-      var ty = (size.height - seg.height * scale) / 2;
-
-      var $seg = $s.createSVGElement('g').
-        attr('transform', 'translate(' + tx + ' ' + ty + ')' +
-            ' scale(' + scale + ') ');
-      device.$ui.append($seg);
-
-      var update = function() {
-        var segs = '';
-        for (var i = 0; i < allSegs.length; i += 1) {
-          if (isHot(device.getInputs()[i].getValue() ) ) {
-            segs += allSegs.charAt(i);
+      if (!device.headless) {
+        var super_getSize = device.getSize;
+        device.getSize = function() {
+          var size = super_getSize();
+          return {width: unit * 4, height: size.height};
+        };
+  
+        var size = device.getSize();
+        var sw = seg.width;
+        var sh = seg.height;
+        var dw = size.width - unit;
+        var dh = size.height - unit;
+  
+        var scale = (sw / sh > dw / dh)? dw / sw : dh / sh;
+        var tx = (size.width - seg.width * scale) / 2;
+        var ty = (size.height - seg.height * scale) / 2;
+  
+        var $seg = $s.createSVGElement('g').
+          attr('transform', 'translate(' + tx + ' ' + ty + ')' +
+              ' scale(' + scale + ') ');
+        device.$ui.append($seg);
+  
+        var update = function() {
+          var segs = '';
+          for (var i = 0; i < allSegs.length; i += 1) {
+            if (isHot(device.getInputs()[i].getValue() ) ) {
+              segs += allSegs.charAt(i);
+            }
           }
-        }
-        $seg.children().remove();
-        drawSeg(seg, $s.graphics($seg), segs, hiColor, loColor, '#000000');
-      };
-      device.$ui.on('inputValueChange', update);
-      update();
+          $seg.children().remove();
+          drawSeg(seg, $s.graphics($seg), segs, hiColor, loColor, '#000000');
+        };
+        device.$ui.on('inputValueChange', update);
+        update();
+      }
     };
   };
 

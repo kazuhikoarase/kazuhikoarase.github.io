@@ -217,7 +217,7 @@ var simcir = function($) {
     if (!node.headless) {
 
       node.$ui.attr('class', 'simcir-node simcir-node-type-' + node.type);
-  
+
       var $circle = createSVGElement('circle').
         attr({cx: 0, cy: 0, r: 4});
       node.$ui.on('mouseover', function(event) {
@@ -231,7 +231,7 @@ var simcir = function($) {
         }
       });
       node.$ui.append($circle);
-  
+
       if (node.label) {
         var $label = createLabel(node.label).
           attr('class', 'simcir-node-label');
@@ -380,7 +380,7 @@ var simcir = function($) {
       };
       layoutNodes(getInputs(), 0);
       layoutNodes(getOutputs(), w);
-      
+
       $label.attr({x: w / 2, y: h + fontSize});
     };
     var getInputs = function() {
@@ -419,10 +419,10 @@ var simcir = function($) {
     if (!device.headless) {
 
       device.$ui.attr('class', 'simcir-device');
-  
+
       var $rect = createSVGElement('rect').attr('rx', 2).attr('ry', 2);
       device.$ui.append($rect);
-  
+
       var label = device.deviceDef.label;
       if (typeof label == 'undefined') {
         label = device.deviceDef.type;
@@ -525,7 +525,7 @@ var simcir = function($) {
         } else if (deviceDef.type == 'Out') {
           outPort = device.addOutput(deviceDef.label);
           inPort = controller($dev).getInputs()[0];
-        } 
+        }
         inPort.$ui.on('nodeValueChange', function() {
           outPort.setValue(inPort.getValue() );
         });
@@ -655,7 +655,7 @@ var simcir = function($) {
     var bar_mouseMoveHandler = function(event) {
       calc(function(unitSize) {
         setValues( (event.pageY - dragPoint.y) /
-            unitSize, _min, _max, _barSize); 
+            unitSize, _min, _max, _barSize);
       });
     };
     var bar_mouseUpHandler = function(event) {
@@ -671,9 +671,9 @@ var simcir = function($) {
       var y = event.pageY - off.top - pos.y;
       var barPos = transform($bar);
       if (y < barPos.y) {
-        setValues(_value - _barSize, _min, _max, _barSize); 
+        setValues(_value - _barSize, _min, _max, _barSize);
       } else {
-        setValues(_value + _barSize, _min, _max, _barSize); 
+        setValues(_value + _barSize, _min, _max, _barSize);
       }
     };
     $body.on('mousedown', body_mouseDownHandler);
@@ -702,7 +702,7 @@ var simcir = function($) {
       f(_height / (_max - _min) );
     };
     var setValues = function(value, min, max, barSize) {
-      value = Math.max(min, Math.min(value, max - barSize) ); 
+      value = Math.max(min, Math.min(value, max - barSize) );
       var changed = (value != _value);
       _value = value;
       _min = min;
@@ -765,10 +765,10 @@ var simcir = function($) {
     transform($devicePane, toolboxWidth, 0);
     var $connectorPane = createSVGElement('g');
     var $temporaryPane = createSVGElement('g');
-  
+
     enableEvents($connectorPane, false);
     enableEvents($temporaryPane, false);
-    
+
     if (data.showToolbox) {
       $workspace.append($toolboxPane);
     }
@@ -778,7 +778,7 @@ var simcir = function($) {
 
     //-------------------------------------------
     // APIs
-    // 
+    //
 
     var addDevice = function($dev) {
       $devicePane.append($dev);
@@ -960,7 +960,7 @@ var simcir = function($) {
         x: event.pageX - pos.x,
         y: event.pageY - pos.y};
       dragMoveHandler = function(event) {
-        transform($dev, 
+        transform($dev,
             event.pageX - dragPoint.x,
             event.pageY - dragPoint.y);
       };
@@ -977,7 +977,7 @@ var simcir = function($) {
         }
       };
     };
-    
+
     var $selectedDevices = [];
     var addSelected = function($dev) {
       controller($dev).setSelected(true);
@@ -1012,7 +1012,7 @@ var simcir = function($) {
           y: event.pageY - dragPoint.y - curPos.y};
         $.each($selectedDevices, function(i, $dev) {
           var curPos = transform($dev);
-          transform($dev, 
+          transform($dev,
               curPos.x + deltaPos.x,
               curPos.y + deltaPos.y);
         });
