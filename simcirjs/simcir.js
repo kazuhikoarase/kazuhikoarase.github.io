@@ -467,7 +467,6 @@ var simcir = function($) {
         $label.on('dblclick', label_dblClickHandler);
       } );
       device.$ui.on('removeDevice', function() {
-        console.log('remove');
         $label.off('dblclick', label_dblClickHandler);
       } );
       device.$ui.append($label);
