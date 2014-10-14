@@ -160,11 +160,13 @@ var simcir = function($) {
   }();
 
   var eventQueue = function() {
-    var queue = [];
+    var _queue = [];
     var postEvent = function(event) {
-      queue.push(event);
+      _queue.push(event);
     };
     window.setInterval(function() {
+      var queue = _queue;
+      _queue = [];
       while (queue.length > 0) {
         var e = queue.shift();
         e.target.trigger(e.type);
@@ -779,8 +781,8 @@ var simcir = function($) {
   var createWorkspace = function(data) {
 
     data = $.extend({
-      width: 800,
-      height: 300,
+      width: 400,
+      height: 200,
       showToolbox: true,
       toolbox: [],
       devices: [],
@@ -1205,8 +1207,9 @@ var simcir = function($) {
   registerDevice('Out', createPortFactory('out') );
 
   var setupToPlaceHolder = function($placeHolder) {
+    var text = $placeHolder.text().replace(/^\s+|\s+$/g, '');
     var $workspace = simcir.createWorkspace(
-        JSON.parse($placeHolder.text() ) );
+        JSON.parse(text || '{}') );
     var $dataArea = $('<textarea></textarea>').
       addClass('simcir-json-data-area').
       attr('readonly', 'readonly').
