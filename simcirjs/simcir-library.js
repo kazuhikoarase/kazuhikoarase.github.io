@@ -150,13 +150,14 @@ simcir.registerDevice('T-FF',
     {"type":"JK-FF"}
   ],
   "devices":[
-    {"type":"JK-FF","id":"dev0","x":240,"y":72,"label":"JK-FF"},
-    {"type":"In","id":"dev1","x":176,"y":56,"label":"T"},
-    {"type":"In","id":"dev2","x":176,"y":104,"label":"CLK"},
-    {"type":"Out","id":"dev3","x":336,"y":56,"label":"Q"},
-    {"type":"Out","id":"dev4","x":336,"y":104,"label":"~Q"},
-    {"type":"DC","id":"dev5","x":88,"y":56,"label":"DC"},
-    {"type":"PushOn","id":"dev6","x":88,"y":104,"label":"PushOn"}
+    {"type":"JK-FF","id":"dev0","x":264,"y":72,"label":"JK-FF"},
+    {"type":"In","id":"dev1","x":200,"y":56,"label":"T"},
+    {"type":"In","id":"dev2","x":200,"y":104,"label":"CLK"},
+    {"type":"Out","id":"dev3","x":360,"y":56,"label":"Q"},
+    {"type":"Out","id":"dev4","x":360,"y":104,"label":"~Q"},
+    {"type":"Toggle","id":"dev5","x":136,"y":56,"label":"Toggle"},
+    {"type":"PushOn","id":"dev6","x":136,"y":104,"label":"PushOn"},
+    {"type":"DC","id":"dev7","x":72,"y":56,"label":"DC"}
   ],
   "connectors":[
     {"from":"dev0.in0","to":"dev1.out0"},
@@ -166,7 +167,8 @@ simcir.registerDevice('T-FF',
     {"from":"dev2.in0","to":"dev6.out0"},
     {"from":"dev3.in0","to":"dev0.out0"},
     {"from":"dev4.in0","to":"dev0.out1"},
-    {"from":"dev6.in0","to":"dev5.out0"}
+    {"from":"dev5.in0","to":"dev7.out0"},
+    {"from":"dev6.in0","to":"dev7.out0"}
   ]
 }
 );
@@ -179,26 +181,27 @@ simcir.registerDevice('8bitCounter',
   "toolbox":[
   ],
   "devices":[
-    {"type":"T-FF","id":"dev0","x":136,"y":16,"label":"T-FF"},
-    {"type":"T-FF","id":"dev1","x":136,"y":64,"label":"T-FF"},
-    {"type":"T-FF","id":"dev2","x":136,"y":112,"label":"T-FF"},
-    {"type":"T-FF","id":"dev3","x":136,"y":160,"label":"T-FF"},
-    {"type":"T-FF","id":"dev4","x":136,"y":208,"label":"T-FF"},
-    {"type":"T-FF","id":"dev5","x":136,"y":256,"label":"T-FF"},
-    {"type":"T-FF","id":"dev6","x":136,"y":304,"label":"T-FF"},
-    {"type":"T-FF","id":"dev7","x":136,"y":352,"label":"T-FF"},
-    {"type":"Out","id":"dev8","x":216,"y":16,"label":"D0"},
-    {"type":"Out","id":"dev9","x":216,"y":64,"label":"D1"},
-    {"type":"Out","id":"dev10","x":216,"y":112,"label":"D2"},
-    {"type":"Out","id":"dev11","x":216,"y":160,"label":"D3"},
-    {"type":"Out","id":"dev12","x":216,"y":208,"label":"D4"},
-    {"type":"Out","id":"dev13","x":216,"y":256,"label":"D5"},
-    {"type":"Out","id":"dev14","x":216,"y":304,"label":"D6"},
-    {"type":"Out","id":"dev15","x":216,"y":352,"label":"D7"},
-    {"type":"In","id":"dev16","x":88,"y":16,"label":"T"},
-    {"type":"In","id":"dev17","x":88,"y":64,"label":"CLK"},
-    {"type":"DC","id":"dev18","x":40,"y":16,"label":"DC"},
-    {"type":"PushOn","id":"dev19","x":40,"y":64,"label":"PushOn"}
+    {"type":"T-FF","id":"dev0","x":160,"y":16,"label":"T-FF"},
+    {"type":"T-FF","id":"dev1","x":160,"y":64,"label":"T-FF"},
+    {"type":"T-FF","id":"dev2","x":160,"y":112,"label":"T-FF"},
+    {"type":"T-FF","id":"dev3","x":160,"y":160,"label":"T-FF"},
+    {"type":"T-FF","id":"dev4","x":160,"y":208,"label":"T-FF"},
+    {"type":"T-FF","id":"dev5","x":160,"y":256,"label":"T-FF"},
+    {"type":"T-FF","id":"dev6","x":160,"y":304,"label":"T-FF"},
+    {"type":"T-FF","id":"dev7","x":160,"y":352,"label":"T-FF"},
+    {"type":"Out","id":"dev8","x":240,"y":16,"label":"D0"},
+    {"type":"Out","id":"dev9","x":240,"y":64,"label":"D1"},
+    {"type":"Out","id":"dev10","x":240,"y":112,"label":"D2"},
+    {"type":"Out","id":"dev11","x":240,"y":160,"label":"D3"},
+    {"type":"Out","id":"dev12","x":240,"y":208,"label":"D4"},
+    {"type":"Out","id":"dev13","x":240,"y":256,"label":"D5"},
+    {"type":"Out","id":"dev14","x":240,"y":304,"label":"D6"},
+    {"type":"Out","id":"dev15","x":240,"y":352,"label":"D7"},
+    {"type":"In","id":"dev16","x":112,"y":16,"label":"T"},
+    {"type":"In","id":"dev17","x":112,"y":64,"label":"CLK"},
+    {"type":"PushOn","id":"dev18","x":64,"y":64,"label":"PushOn"},
+    {"type":"DC","id":"dev19","x":16,"y":16,"label":"DC"},
+    {"type":"Toggle","id":"dev20","x":64,"y":16,"label":"Toggle"}
   ],
   "connectors":[
     {"from":"dev0.in0","to":"dev16.out0"},
@@ -225,9 +228,10 @@ simcir.registerDevice('8bitCounter',
     {"from":"dev13.in0","to":"dev5.out0"},
     {"from":"dev14.in0","to":"dev6.out0"},
     {"from":"dev15.in0","to":"dev7.out0"},
-    {"from":"dev16.in0","to":"dev18.out0"},
-    {"from":"dev17.in0","to":"dev19.out0"},
-    {"from":"dev19.in0","to":"dev18.out0"}
+    {"from":"dev16.in0","to":"dev20.out0"},
+    {"from":"dev17.in0","to":"dev18.out0"},
+    {"from":"dev18.in0","to":"dev19.out0"},
+    {"from":"dev20.in0","to":"dev19.out0"}
   ]
 }
 );

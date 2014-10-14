@@ -160,13 +160,19 @@ var simcir = function($) {
   }();
 
   var eventQueue = function() {
-    var _queue = [];
+    var _queue = null;
     var postEvent = function(event) {
+      if (_queue == null) {
+        _queue = [];
+      }
       _queue.push(event);
     };
     window.setInterval(function() {
+      if (_queue == null) {
+        return;
+      }
       var queue = _queue;
-      _queue = [];
+      _queue = null;
       while (queue.length > 0) {
         var e = queue.shift();
         e.target.trigger(e.type);
