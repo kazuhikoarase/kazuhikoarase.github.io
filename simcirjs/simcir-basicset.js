@@ -563,13 +563,21 @@
     if (!device.headless) {
       var hiColor = device.deviceDef.color || defaultLEDColor;
       var loColor = multiplyColor(hiColor, 0.25);
+      var bLoColor = multiplyColor(hiColor, 0.2);
+      var bHiColor = multiplyColor(hiColor, 0.8);
       var size = device.getSize();
-      var $led = $s.createSVGElement('circle').
+      var $ledbase = $s.createSVGElement('circle').
         attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4}).
+        attr('stroke', 'none').
+        attr('fill', bLoColor);
+      device.$ui.append($ledbase);
+      var $led = $s.createSVGElement('circle').
+        attr({cx: size.width / 2, cy: size.height / 2, r: size.width / 4 * 0.8}).
         attr('stroke', 'none').
         attr('fill', loColor);
       device.$ui.append($led);
       device.$ui.on('inputValueChange', function() {
+        $ledbase.attr('fill', isHot(in1.getValue() )? bHiColor : bLoColor);
         $led.attr('fill', isHot(in1.getValue() )? hiColor : loColor);
       });
     }
