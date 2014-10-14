@@ -160,6 +160,8 @@ var simcir = function($) {
   }();
 
   var eventQueue = function() {
+    var delay = 50; // ms
+    var limit = delay / 2;
     var _queue = null;
     var postEvent = function(event) {
       if (_queue == null) {
@@ -167,7 +169,7 @@ var simcir = function($) {
       }
       _queue.push(event);
     };
-    window.setInterval(function() {
+    var dispatchEvent = function() {
       if (_queue == null) {
         return;
       }
@@ -177,7 +179,16 @@ var simcir = function($) {
         var e = queue.shift();
         e.target.trigger(e.type);
       }
-    }, 50);
+    };
+    var getTime = function() {
+      return new Date().getTime();
+    };
+    window.setInterval(function() {
+      var start = getTime();
+      while (getTime() - start < limit) {
+        dispatchEvent();
+      }
+    }, delay);
     return {
       postEvent: postEvent
     };
