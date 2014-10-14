@@ -38,6 +38,7 @@
 .simcir-connector {
   stroke-width: 1;
   stroke: #0000ff;
+  stroke-linecap: round;
 }
 
 .simcir-device {
