@@ -142,6 +142,12 @@ var simcir = function($) {
     $o.css('pointer-events', enable? 'visiblePainted' : 'none');
   };
 
+  var disableSelection = function($o) {
+    $o.each(function() {
+      this.onselectstart = function() { return false; };
+    }).css('-webkit-user-select', 'none');
+  };
+
   var controller = function() {
     var id = 'controller';
     return function($ui, controller) {
@@ -789,6 +795,7 @@ var simcir = function($) {
     var $workspace = createSVG(
         workspaceWidth, workspaceHeight).
       attr('class', 'simcir-workspace');
+    disableSelection($workspace);
 
     var $toolboxDevicePane = createSVGElement('g');
     var $scrollbar = createScrollbar();
