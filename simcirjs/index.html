@@ -10,6 +10,14 @@
 <script type="text/javascript" src="simcir-library.js"></script>
 <style type="text/css">
 * { font-family: "Meiryo UI", arial, sans-serif; }
+.code {
+  margin: 16px 0px 16px 0px; padding: 4px; width: 760px;
+  border-width: 0px 0px 0px 4px; border-color: #cccccc; border-style: solid;
+  white-space: pre; background-color: #f0f0f0;
+}
+.note {
+  color: #0000ff;
+}
 </style>
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 <link rel="icon" href="assets/simcir_128.png" type="image/png" />
@@ -24,6 +32,10 @@
 <a href="https://github.com/kazuhikoarase/simcirjs"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
 <h1>SimcirJS</h1>
+
+<p>
+<a href="https://github.com/kazuhikoarase/simcirjs">Download</a>
+</p>
 
 <div style="vertical-layout:middle;">
   <g:plusone></g:plusone>
@@ -82,9 +94,37 @@
 }
 </div>
 
+<h3>Embed your circuit</h3>
+<p>
+Ctrl+Click(Mac:command+Click) on your circuit and copy circuit data.
+<br/>
+Then paste your circuit into template below.
+</p>
+
+<div class="code"
+>&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /&gt;
+&lt;script type="text/javascript" src="jquery-2.1.1.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="simcir.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="simcir.css" /&gt;
+&lt;script type="text/javascript" src="simcir-basicset.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="simcir-basicset.css" /&gt;
+&lt;script type="text/javascript" src="simcir-library.js"&gt;&lt;/script&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="simcir"&gt;
+<span class="note">&lt;!-- paste here your circuit data --&gt;</span>
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</div>
+
 <h3>Reuse a circuit</h3>
 <p>
-To reuse a circuit as library, use In and Out.
+To reuse a circuit as library, use device 'In' and 'Out'.
 </p>
 <div class="simcir">
 {
@@ -124,6 +164,26 @@ To reuse a circuit as library, use In and Out.
     {"from":"dev8.in1","to":"dev0.out0"}
   ]
 }
+</div>
+<p>
+Then register it in JavaScript and add to the toolbox in HTML.
+</p>
+<div class="code"
+>simcir.registerDevice('<span class="note">MyDevice</span>',
+<span class="note">// paste here your circuit data</span>
+);
+</div>
+<div class="code"
+>&lt;div class="simcir"&gt;
+         &#x22ee;
+  "toolbox":[
+    {"type":"DC"},
+    {"type":"PushOff"},
+         &#x22ee;
+    {"type":"<span class="note">MyDevice</span>"}
+  ],
+         &#x22ee;
+&lt;/div&gt;
 </div>
 
 <div class="simcir">
