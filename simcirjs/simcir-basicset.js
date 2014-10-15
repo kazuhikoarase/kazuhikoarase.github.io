@@ -9,6 +9,28 @@
 //  http://www.opensource.org/licenses/mit-license.php
 //
 
+// includes following device types:
+//  DC
+//  LED
+//  PushOff
+//  PushOn
+//  Toggle
+//  BUF
+//  NOT
+//  AND
+//  NAND
+//  OR
+//  NOR
+//  EOR
+//  ENOR
+//  OSC
+//  7seg
+//  16seg
+//  4bit7seg
+//  RotaryEncoder
+//  BusIn
+//  BusOut
+
 !function($, $s) {
 
   // unit size

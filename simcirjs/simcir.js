@@ -9,6 +9,10 @@
 //  http://www.opensource.org/licenses/mit-license.php
 //
 
+// includes following device types:
+//  In
+//  Out
+
 var simcir = function($) {
 
   var createSVGElement = function(tagName) {
