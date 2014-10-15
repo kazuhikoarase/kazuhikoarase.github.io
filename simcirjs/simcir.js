@@ -170,9 +170,6 @@ var simcir = function($) {
       _queue.push(event);
     };
     var dispatchEvent = function() {
-      if (_queue == null) {
-        return;
-      }
       var queue = _queue;
       _queue = null;
       while (queue.length > 0) {
@@ -183,12 +180,15 @@ var simcir = function($) {
     var getTime = function() {
       return new Date().getTime();
     };
-    window.setInterval(function() {
+    var timerHandler = function() {
       var start = getTime();
-      while (getTime() - start < limit) {
+      while (_queue != null && getTime() - start < limit) {
         dispatchEvent();
       }
-    }, delay);
+      window.setTimeout(timerHandler, 
+        Math.max(10, delay - (getTime() - start) ) );
+    };
+    timerHandler();
     return {
       postEvent: postEvent
     };

@@ -232,13 +232,14 @@ In this case, a new device 'RS-FF' is added.
 <div class="simcir">
 {
   "width":500,
-  "height":200,
+  "height":300,
   "showToolbox":true,
   "toolbox":[
     {"type":"DC"},
     {"type":"Toggle"},
     {"type":"LED","color":"#00ff00","label":"LED(G)"},
-    {"type":"NAND","numInputs":"3","label":"NAND(3in)"}
+    {"type":"NAND","numInputs":"3","label":"NAND(3in)"},
+    {"type":"OSC","freq":1,"label":"OSC(1Hz)"}
   ],
   "devices":[
     {"type":"NAND","numInputs":"3","label":"NAND(3in)","id":"dev0","x":200,"y":80},
@@ -246,7 +247,9 @@ In this case, a new device 'RS-FF' is added.
     {"type":"Toggle","id":"dev2","x":144,"y":80,"label":"Toggle"},
     {"type":"Toggle","id":"dev3","x":144,"y":128,"label":"Toggle"},
     {"type":"DC","id":"dev4","x":88,"y":80,"label":"DC"},
-    {"type":"LED","color":"#00ff00","label":"LED(G)","id":"dev5","x":256,"y":80}
+    {"type":"LED","color":"#00ff00","label":"LED(G)","id":"dev5","x":256,"y":80},
+    {"type":"OSC","freq":1,"label":"OSC(1Hz)","id":"dev6","x":112,"y":208},
+    {"type":"LED","color":"#00ff00","label":"LED(G)","id":"dev7","x":176,"y":208}
   ],
   "connectors":[
     {"from":"dev0.in0","to":"dev1.out0"},
@@ -255,7 +258,8 @@ In this case, a new device 'RS-FF' is added.
     {"from":"dev1.in0","to":"dev4.out0"},
     {"from":"dev2.in0","to":"dev4.out0"},
     {"from":"dev3.in0","to":"dev4.out0"},
-    {"from":"dev5.in0","to":"dev0.out0"}
+    {"from":"dev5.in0","to":"dev0.out0"},
+    {"from":"dev7.in0","to":"dev6.out0"}
   ]
 }
 </div>
