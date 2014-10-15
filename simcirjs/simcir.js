@@ -161,7 +161,7 @@ var simcir = function($) {
 
   var eventQueue = function() {
     var delay = 50; // ms
-    var limit = delay / 2;
+    var limit = 40; // ms
     var _queue = null;
     var postEvent = function(event) {
       if (_queue == null) {
@@ -186,7 +186,7 @@ var simcir = function($) {
         dispatchEvent();
       }
       window.setTimeout(timerHandler, 
-        Math.max(10, delay - (getTime() - start) ) );
+        Math.max(delay - limit, delay - (getTime() - start) ) );
     };
     timerHandler();
     return {
