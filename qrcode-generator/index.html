@@ -2,13 +2,13 @@
 <html itemscope itemtype="http://schema.org/Product">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
-	<script type="text/javascript" src="assets/qrcode.js"></script>
-	<script type="text/javascript" src="assets/qrcode_SJIS.js"></script>
-	<script type="text/javascript" src="assets/sample.js"></script>
-	<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-	<link rel="stylesheet" href="assets/style.css" type="text/css" />
-	<title itemprop="name">QR Code Generator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
+  <script type="text/javascript" src="assets/qrcode.js"></script>
+  <script type="text/javascript" src="assets/qrcode_SJIS.js"></script>
+  <script type="text/javascript" src="assets/sample.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+  <link rel="stylesheet" href="assets/style.css" type="text/css" />
+  <title itemprop="name">QR Code Generator</title>
 </head>
 
 <body onload="update_qrcode()" >
@@ -31,23 +31,44 @@
 
 <div class="section">
 
-<form>
-	<textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
-	<br/>
-	<input type="button" value="update" onclick="update_qrcode()"/>
-	<div id="qr"></div>
-</form>
+  <form name="qrForm">
+    <span>TypeNumber:</span>
+    <select name="t">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4" selected="selected">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+    </select>
+    <span>ErrorCorrectLevel:</span>
+    <select name="e">
+      <option value="L">L(7%)</option>
+      <option value="M" selected="selected">M(15%)</option>
+      <option value="Q">Q(25%)</option>
+      <option value="H">H(30%)</option>
+    </select>
+    <br/>
+    <textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
+    <br/>
+    <input type="button" value="update" onclick="update_qrcode()"/>
+    <div id="qr"></div>
+  </form>
 
 </div>
 
 <div class="section">
-	<ul>
-		<li>
-			<span>The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED</span>
-			<br/>
-			<a href="http://www.denso-wave.com/qrcode/faqpatent-e.html">http://www.denso-wave.com/qrcode/faqpatent-e.html</a>	
-		</li>
-	</ul>
+  <ul>
+    <li>
+      <span>The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED</span>
+      <br/>
+      <a href="http://www.denso-wave.com/qrcode/faqpatent-e.html">http://www.denso-wave.com/qrcode/faqpatent-e.html</a>  
+    </li>
+  </ul>
 </div>
 
 <hr/>
