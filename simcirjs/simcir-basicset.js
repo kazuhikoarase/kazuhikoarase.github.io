@@ -602,7 +602,6 @@
   $s.registerDevice('OSC', function(device) {
     var freq = device.deviceDef.freq || 10;
     var delay = ~~(500 / freq);
-    console.log('delay:' + delay);
     var out1 = device.addOutput();
     var timerId = null;
     var on = false;
