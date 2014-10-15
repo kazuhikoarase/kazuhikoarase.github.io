@@ -664,6 +664,13 @@ var simcir = function($) {
         } else if (deviceDef.type == 'Out') {
           outPort = device.addOutput(deviceDef.label);
           inPort = controller($dev).getInputs()[0];
+          // force disconnect test devices that connected to Out-port
+          var outNode = controller($dev).getOutputs()[0];
+          $.each(outNode.getInputs(), function(i, inNode) {
+            if (inNode.getOutput() != null) {
+              inNode.getOutput().disconnectFrom(inNode);
+            }
+          } );
         }
         inPort.$ui.on('nodeValueChange', function() {
           outPort.setValue(inPort.getValue() );
