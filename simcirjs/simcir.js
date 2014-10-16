@@ -718,11 +718,13 @@ var simcir = function($) {
   };
 
   var factories = {};
+  var defaultToolbox = [];
   var registerDevice = function(type, factory) {
     if (typeof factory == 'object') {
       factory = createDeviceRefFactory(factory);
     }
     factories[type] = factory;
+    defaultToolbox.push({type: type});
   };
 
   var createScrollbar = function() {
@@ -832,7 +834,7 @@ var simcir = function($) {
       width: 400,
       height: 200,
       showToolbox: true,
-      toolbox: [],
+      toolbox: defaultToolbox,
       devices: [],
       connectors: [],
     }, data);
