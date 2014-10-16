@@ -449,8 +449,8 @@ simcir.registerDevice('4to16BinaryDecoder',
     {"type":"3to8BinaryDecoder","id":"dev9","x":208,"y":184,"label":"3to8BinaryDecoder"},
     {"type":"BusOut","id":"dev10","x":320,"y":88,"label":"BusOut"},
     {"type":"BusOut","id":"dev11","x":320,"y":184,"label":"BusOut"},
-    {"type":"Out","id":"dev12","x":368,"y":128,"label":"8bit0"},
-    {"type":"Out","id":"dev13","x":368,"y":184,"label":"8bit1"}
+    {"type":"Out","id":"dev12","x":376,"y":128,"label":"A0"},
+    {"type":"Out","id":"dev13","x":376,"y":184,"label":"A1"}
   ],
   "connectors":[
     {"from":"dev5.in0","to":"dev3.out0"},

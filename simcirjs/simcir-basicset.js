@@ -655,7 +655,7 @@
   $s.registerDevice('BusIn', function(device) {
     var numOutputs = Math.max(2, device.deviceDef.numOutputs || 8);
     device.halfPitch = true;
-    device.addInput();
+    device.addInput('', 'x' + numOutputs);
     for (var i = 0; i < numOutputs; i += 1) {
       device.addOutput();
     }
@@ -677,7 +677,7 @@
     for (var i = 0; i < numInputs; i += 1) {
       device.addInput();
     }
-    device.addOutput();
+    device.addOutput('', 'x' + numInputs);
     device.$ui.on('inputValueChange', function() {
       var busValue = [];
       var hotCount = 0;

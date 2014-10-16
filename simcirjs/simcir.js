@@ -207,14 +207,15 @@ var simcir = function($) {
       css('font-size', fontSize + 'px');
   };
 
-  var createNode = function(type, label, headless) {
+  var createNode = function(type, label, description, headless) {
     var $node = createSVGElement('g').
       attr('simcir-node-type', type);
     if (!headless) {
       $node.attr('class', 'simcir-node');
     }
     var node = createNodeController({
-      $ui: $node, type: type, label: label, headless: headless});
+      $ui: $node, type: type, label: label,
+      description: description, headless: headless});
     if (type == 'in') {
       controller($node, createInputNodeController(node) );
     } else if (type == 'out') {
@@ -260,21 +261,34 @@ var simcir = function($) {
         }
       });
       node.$ui.append($circle);
-
-      if (node.label) {
-        var $label = createLabel(node.label).
+      var appendLabel = function(text, align) {
+        var $label = createLabel(text).
           attr('class', 'simcir-node-label');
         enableEvents($label, false);
-        if (node.type == 'in') {
+        if (align == 'right') {
           $label.attr('text-anchor', 'start').
             attr('x', 6).
             attr('y', fontSize / 2);
-        } else if (node.type == 'out') {
+        } else if (align == 'left') {
           $label.attr('text-anchor', 'end').
             attr('x', -6).
             attr('y', fontSize / 2);
         }
         node.$ui.append($label);
+      };
+      if (node.label) {
+        if (node.type == 'in') {
+          appendLabel(node.label, 'right');
+        } else if (node.type == 'out') {
+          appendLabel(node.label, 'left');
+        }
+      }
+      if (node.description) {
+        if (node.type == 'in') {
+          appendLabel(node.description, 'left');
+        } else if (node.type == 'out') {
+          appendLabel(node.description, 'right');
+        }
       }
       node.$ui.on('nodeValueChange', function(event) {
         if (_value != null) {
@@ -364,8 +378,8 @@ var simcir = function($) {
   var createDeviceController = function(device) {
     var inputs = [];
     var outputs = [];
-    var addInput = function(label) {
-      var $node = createNode('in', label, device.headless);
+    var addInput = function(label, description) {
+      var $node = createNode('in', label, description, device.headless);
       $node.on('nodeValueChange', function(event) {
         device.$ui.trigger('inputValueChange');
       });
@@ -376,8 +390,8 @@ var simcir = function($) {
       inputs.push(node);
       return node;
     };
-    var addOutput = function(label) {
-      var $node = createNode('out', label, device.headless);
+    var addOutput = function(label, description) {
+      var $node = createNode('out', label, description, device.headless);
       if (!device.headless) {
         device.$ui.append($node);
       }
@@ -653,23 +667,29 @@ var simcir = function($) {
         }
         return (x1 < x2)? -1 : 1;
       });
-      $.each($ports, function(i, $dev) {
-        var deviceDef = controller($dev).deviceDef;
+      var getDesc = function(port) {
+        return port? port.description : '';
+      };
+      $.each($ports, function(i, $port) {
+        var port = controller($port);
+        var portDef = port.deviceDef;
         var inPort;
         var outPort;
-        if (deviceDef.type == 'In') {
-          inPort = device.addInput(deviceDef.label);
-          outPort = controller($dev).getOutputs()[0];
+        if (portDef.type == 'In') {
+          outPort = port.getOutputs()[0];
+          inPort = device.addInput(portDef.label,
+              getDesc(outPort.getInputs()[0]) );
           // force disconnect test devices that connected to In-port
-          var inNode = controller($dev).getInputs()[0];
+          var inNode = port.getInputs()[0];
           if (inNode.getOutput() != null) {
             inNode.getOutput().disconnectFrom(inNode);
           }
-        } else if (deviceDef.type == 'Out') {
-          outPort = device.addOutput(deviceDef.label);
-          inPort = controller($dev).getInputs()[0];
+        } else if (portDef.type == 'Out') {
+          inPort = port.getInputs()[0];
+          outPort = device.addOutput(portDef.label,
+              getDesc(inPort.getOutput() ) );
           // force disconnect test devices that connected to Out-port
-          var outNode = controller($dev).getOutputs()[0];
+          var outNode = port.getOutputs()[0];
           $.each(outNode.getInputs(), function(i, inNode) {
             if (inNode.getOutput() != null) {
               inNode.getOutput().disconnectFrom(inNode);

@@ -155,27 +155,27 @@ To reuse a circuit as library, use device 'In' and 'Out'.
     {"type":"NAND"}
   ],
   "devices":[
-    {"type":"In","id":"dev0","x":176,"y":112,"label":"~R"},
-    {"type":"NAND","id":"dev1","x":224,"y":56,"label":"NAND"},
-    {"type":"Out","id":"dev2","x":272,"y":56,"label":"Q"},
-    {"type":"Out","id":"dev3","x":272,"y":104,"label":"~Q"},
-    {"type":"DC","id":"dev4","x":64,"y":80,"label":"DC"},
-    {"type":"PushOff","id":"dev5","x":120,"y":48,"label":"PushOff"},
-    {"type":"PushOff","id":"dev6","x":120,"y":112,"label":"PushOff"},
-    {"type":"In","id":"dev7","x":176,"y":48,"label":"~S"},
-    {"type":"NAND","id":"dev8","x":224,"y":104,"label":"NAND"}
+    {"type":"DC","id":"dev0","x":64,"y":80,"label":"DC"},
+    {"type":"PushOff","id":"dev1","x":120,"y":48,"label":"PushOff"},
+    {"type":"PushOff","id":"dev2","x":120,"y":112,"label":"PushOff"},
+    {"type":"In","id":"dev3","x":176,"y":48,"label":"~S"},
+    {"type":"In","id":"dev4","x":176,"y":112,"label":"~R"},
+    {"type":"NAND","id":"dev5","x":232,"y":56,"label":"NAND"},
+    {"type":"NAND","id":"dev6","x":232,"y":104,"label":"NAND"},
+    {"type":"Out","id":"dev7","x":288,"y":56,"label":"Q"},
+    {"type":"Out","id":"dev8","x":288,"y":104,"label":"~Q"}
   ],
   "connectors":[
-    {"from":"dev0.in0","to":"dev6.out0"},
-    {"from":"dev1.in0","to":"dev7.out0"},
-    {"from":"dev1.in1","to":"dev8.out0"},
-    {"from":"dev2.in0","to":"dev1.out0"},
-    {"from":"dev3.in0","to":"dev8.out0"},
-    {"from":"dev5.in0","to":"dev4.out0"},
-    {"from":"dev6.in0","to":"dev4.out0"},
+    {"from":"dev1.in0","to":"dev0.out0"},
+    {"from":"dev2.in0","to":"dev0.out0"},
+    {"from":"dev3.in0","to":"dev1.out0"},
+    {"from":"dev4.in0","to":"dev2.out0"},
+    {"from":"dev5.in0","to":"dev3.out0"},
+    {"from":"dev5.in1","to":"dev6.out0"},
+    {"from":"dev6.in0","to":"dev5.out0"},
+    {"from":"dev6.in1","to":"dev4.out0"},
     {"from":"dev7.in0","to":"dev5.out0"},
-    {"from":"dev8.in0","to":"dev1.out0"},
-    {"from":"dev8.in1","to":"dev0.out0"}
+    {"from":"dev8.in0","to":"dev6.out0"}
   ]
 }
 </div>
@@ -214,21 +214,23 @@ In this case, a new device 'RS-FF' is added.
   ],
   "devices":[
     {"type":"DC","id":"dev0","x":104,"y":80,"label":"DC"},
-    {"type":"RS-FF","id":"dev1","x":208,"y":80,"label":"RS-FF"},
+    {"type":"PushOff","id":"dev1","x":160,"y":48,"label":"PushOff"},
     {"type":"PushOff","id":"dev2","x":160,"y":112,"label":"PushOff"},
-    {"type":"PushOff","id":"dev3","x":160,"y":48,"label":"PushOff"}
+    {"type":"RS-FF","id":"dev3","x":216,"y":80,"label":"RS-FF"}
   ],
   "connectors":[
-    {"from":"dev1.in0","to":"dev3.out0"},
-    {"from":"dev1.in1","to":"dev2.out0"},
+    {"from":"dev1.in0","to":"dev0.out0"},
     {"from":"dev2.in0","to":"dev0.out0"},
-    {"from":"dev3.in0","to":"dev0.out0"}
+    {"from":"dev3.in0","to":"dev1.out0"},
+    {"from":"dev3.in1","to":"dev2.out0"}
   ]
 }
 </div>
 
 <h3>Customize a device</h3>
-
+<p>
+color, number of inputs, freq ...
+</p>
 <div class="simcir">
 {
   "width":500,
