@@ -364,7 +364,8 @@ var simcir = function($) {
       $dev.attr('class', 'simcir-device');
     }
     controller($dev, createDeviceController(
-        {$ui: $dev, deviceDef: deviceDef, headless: headless}) );
+        {$ui: $dev, deviceDef: deviceDef,
+          headless: headless, doc: null}) );
     var factory = factories[deviceDef.type];
     if (factory) {
       factory(controller($dev) );
@@ -724,7 +725,7 @@ var simcir = function($) {
         var $placeHolder = $('<div></div>').
           addClass('simcir').
           text(JSON.stringify(data) );
-        setupToPlaceHolder($placeHolder);
+        setupSimcir($placeHolder);
         showDialog(title, $placeHolder);
       });
     };
@@ -893,10 +894,6 @@ var simcir = function($) {
     $workspace.append($devicePane);
     $workspace.append($connectorPane);
     $workspace.append($temporaryPane);
-
-    //-------------------------------------------
-    // APIs
-    //
 
     var addDevice = function($dev) {
       $devicePane.append($dev);
@@ -1271,7 +1268,7 @@ var simcir = function($) {
   registerDevice('In', createPortFactory('in') );
   registerDevice('Out', createPortFactory('out') );
 
-  var setupToPlaceHolder = function($placeHolder) {
+  var setupSimcir = function($placeHolder) {
     var text = $placeHolder.text().replace(/^\s+|\s+$/g, '');
     var $workspace = simcir.createWorkspace(
         JSON.parse(text || '{}') );
@@ -1301,25 +1298,94 @@ var simcir = function($) {
     return $workspace;
   };
 
+  var setupSimcirDoc = function($placeHolder) {
+    var $table = $('<table><tbody></tbody></table>').
+      addClass('simcir-doc-table');
+    $.each(defaultToolbox, function(i, deviceDef) {
+      var $dev = createDevice(deviceDef);
+      var device = controller($dev);
+      if (!device.doc) {
+        return;
+      }
+      var doc = $.extend({description: '', params: []},device.doc);
+      var size = device.getSize();
+
+      var $tr = $('<tr></tr>');
+      var hgap = 32;
+      var vgap = 8;
+      var $view = createSVG(size.width + hgap * 2,
+          size.height + vgap * 2 + fontSize);
+      var $dev = createDevice(deviceDef);
+      transform($dev, hgap, vgap);
+
+      $view.append($dev);
+      $tr.append($('<td></td>').css('text-align', 'center').append($view) );
+      var $desc = $('<td></td>');
+      $tr.append($desc);
+
+      if (doc.description) {
+        $desc.append($('<span></span>').
+            text(doc.description) );
+      }
+
+      if (doc.params.length > 0) {
+        $desc.append($('<div>Params</div>').addClass('simcir-doc-title') );
+        var $paramsTable = $('<table><tbody></tbody></table>').
+          addClass('simcir-doc-params-table');
+        $paramsTable.children('tbody').append($('<tr></tr>').
+            append($('<th>Name</th>') ).
+            append($('<th>Type</th>') ).
+            append($('<th>Default</th>') ).
+            append($('<th>Description</th>') ) );
+
+        $.each(doc.params, function(i, param) {
+          $paramsTable.children('tbody').append($('<tr></tr>').
+          append($('<td></td>').text(param.name) ).
+          append($('<td></td>').text(param.type) ).
+          append($('<td></td>').text(param.defaultValue) ).
+          append($('<td></td>').text(param.description) ) );
+        });
+        $desc.append($paramsTable);
+      }
+
+      if (doc.code) {
+        $desc.append($('<div>Code</div>').addClass('simcir-doc-title') );
+        $desc.append($('<div></div>').
+            addClass('simcir-doc-code').text(doc.code) );
+      }
+
+      $table.children('tbody').append($tr);
+    });
+
+
+    $placeHolder.append($table);
+  };
+
   $(function() {
     $('.simcir').each(function() {
-      setupToPlaceHolder($(this) );
+      setupSimcir($(this) );
+    });
+  });
+
+  $(function() {
+    $('.simcir-doc').each(function() {
+      setupSimcirDoc($(this) );
     });
   });
 
   return {
-    createSVGElement: createSVGElement,
-    createWorkspace: createWorkspace,
-    setupToPlaceHolder: setupToPlaceHolder,
     registerDevice: registerDevice,
-    controller: controller,
+    setupSimcir: setupSimcir,
+    createWorkspace: createWorkspace,
+    createSVGElement: createSVGElement,
     addClass: addClass,
     removeClass: removeClass,
     hasClass: hasClass,
     offset: offset,
     transform: transform,
     enableEvents: enableEvents,
-    unit: unit,
-    graphics: graphics
+    graphics: graphics,
+    controller: controller,
+    unit: unit
   };
 }(jQuery);
