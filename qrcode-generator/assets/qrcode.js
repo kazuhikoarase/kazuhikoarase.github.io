@@ -555,10 +555,10 @@ var qrcode = function() {
   //---------------------------------------------------------------------
 
   var QRMode = {
-    MODE_NUMBER :    1 << 0,
-    MODE_ALPHA_NUM :   1 << 1,
-    MODE_8BIT_BYTE :   1 << 2,
-    MODE_KANJI :    1 << 3
+    MODE_NUMBER    : 1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI     : 1 << 3
   };
 
   //---------------------------------------------------------------------
@@ -711,10 +711,10 @@ var qrcode = function() {
         // 1 - 9
 
         switch(mode) {
-        case QRMode.MODE_NUMBER   : return 10;
-        case QRMode.MODE_ALPHA_NUM   : return 9;
-        case QRMode.MODE_8BIT_BYTE  : return 8;
-        case QRMode.MODE_KANJI    : return 8;
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
         default :
           throw new Error('mode:' + mode);
         }
@@ -724,10 +724,10 @@ var qrcode = function() {
         // 10 - 26
 
         switch(mode) {
-        case QRMode.MODE_NUMBER   : return 12;
-        case QRMode.MODE_ALPHA_NUM   : return 11;
-        case QRMode.MODE_8BIT_BYTE  : return 16;
-        case QRMode.MODE_KANJI    : return 10;
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
         default :
           throw new Error('mode:' + mode);
         }
@@ -737,10 +737,10 @@ var qrcode = function() {
         // 27 - 40
 
         switch(mode) {
-        case QRMode.MODE_NUMBER   : return 14;
-        case QRMode.MODE_ALPHA_NUM  : return 13;
-        case QRMode.MODE_8BIT_BYTE  : return 16;
-        case QRMode.MODE_KANJI    : return 12;
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
         default :
           throw new Error('mode:' + mode);
         }
