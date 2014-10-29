@@ -10,41 +10,9 @@
 <script type="text/javascript" src="simcir-basicset.js"></script>
 <link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
 <script type="text/javascript" src="simcir-library.js"></script>
-<style type="text/css">
-* {
-  font-family: "Meiryo UI", arial, sans-serif;
-}
-
-.btn {
-  text-decoration: none;
-  padding: 4px 8px 4px 8px;
-  border-style: none;
-  background-color: #ccccff;
-  color: #000000;
-  font-weight: bold;
-  -webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
-          border-radius: 4px;
-}
-
-.btn:hover {
-  background-color: #ddddff;
-}
-
-.code {
-  margin: 16px 0px 16px 0px;
-  padding: 4px;
-  border-width: 0px 0px 0px 4px;
-  border-color: #cccccc;
-  border-style: solid;
-  background-color: #f0f0f0;
-  white-space: pre;
-}
-
-.note {
-  color: #0000ff;
-}
-</style>
+<script type="text/javascript" src="https://cdn.firebase.com/js/client/1.0.15/firebase.js"></script>
+<script type="text/javascript" src="simcirfb.js"></script>
+<link rel="stylesheet" type="text/css" href="index.css" />
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 <link rel="icon" href="assets/simcir_128.png" type="image/png" />
 <title itemprop="name">SimcirJS</title>
@@ -93,12 +61,18 @@ Last update: 2014/10/28
 Specify width and height only.
 All the other attributes will be used defaults.
 -->
+<!-- 
 <div class="simcir">
 {
   "width":800,
   "height":400
 }
 </div>
+-->
+
+<div id="simcir-fb"></div>
+<a class="btn" href="javascript:void(0)" id="simcir-fb-post-circuit">Save</a>
+<div id="simcir-fb-message"></div>
 
 <h3>Embed your circuit</h3>
 <p>
