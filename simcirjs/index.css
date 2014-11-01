@@ -10,7 +10,7 @@
   border-style: solid;
   border-width: 1px;
   border-color: #999999;
-  background-color: #ffcc99;
+  background-color: #dddddd;
   color: #000000;
   font-weight: bold;
   -webkit-border-radius: 4px;
@@ -19,7 +19,7 @@
 }
 
 .btn:hover {
-  background-color: #ffddaa;
+  background-color: #eeeeee;
 }
 
 .code {
