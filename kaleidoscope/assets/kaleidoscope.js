@@ -155,8 +155,40 @@ var kaleidoscope = function() {
 
       content = createContent(rect, ox, oy, images, 32);
 
-      var render = function() {
+      var lpf = function(len) {
+        var buf = [];
+        for (var i = 0; i < len; i += 1) {
+            buf.push(0);
+        }
+        var i = 0;
+        var putValue = function(n) {
+            buf[i] = n;
+            i = (i + 1) % len;
+        };
+        var getValue = function() {
+            var sum = 0;
+            for (var i = 0; i < len; i += 1) {
+                sum += buf[i];
+            }
+            return sum / len;
+        };
+        return {
+            putValue : putValue,
+            getValue : getValue
+        };
+      };
+
+      var fps = lpf(32);
   
+      var lastTime = new Date();
+  
+      var render = function() {
+
+        var currTime = new Date();
+        fps.putValue(1000 / (currTime - lastTime) );
+        lastTime = currTime;
+        document.getElementById('log').innerHTML = ~~fps.getValue() + 'fps';
+
         var size = ks.getSize();
         updateSize(size.width, size.height);
         updateDisplay(size.width, size.height);
