@@ -27,10 +27,44 @@ BODY {
 <script type="text/javascript" src="assets/kaleidoscope.js"></script>
 <script type="text/javascript">
 window.onload = function() {
+
+  var lpf = function(len) {
+    var buf = [];
+    for (var i = 0; i < len; i += 1) {
+        buf.push(0);
+    }
+    var i = 0;
+    var putValue = function(n) {
+        buf[i] = n;
+        i = (i + 1) % len;
+    };
+    var getValue = function() {
+        var sum = 0;
+        for (var i = 0; i < len; i += 1) {
+            sum += buf[i];
+        }
+        return sum / len;
+    };
+    return {
+        putValue : putValue,
+        getValue : getValue
+    };
+  };
+
+  var fps = lpf(32);
+  var lastTime = 0;
+  var opts = {
+    renderHandler: function(currTime) {
+      fps.putValue(1000 / (currTime - lastTime) );
+      lastTime = currTime;
+      document.getElementById('log').innerHTML = ~~fps.getValue() + 'fps';
+    }
+  };
+
   var ctx = document.getElementById('cv').getContext('2d');
   var imageSrcList = ctx.canvas.innerHTML.
     replace(/^\s+|\s+$/g,'').split(/\s+/g);
-  var ks = kaleidoscope(ctx, imageSrcList, '#000000');
+  var ks = kaleidoscope(ctx, imageSrcList, opts);
 };
 </script>
 <script type="text/javascript" src="https://apis.google.com/js/platform.js" async defer></script>
