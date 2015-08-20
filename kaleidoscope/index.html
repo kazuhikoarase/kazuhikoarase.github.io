@@ -54,7 +54,8 @@ window.onload = function() {
   var fps = lpf(32);
   var lastTime = 0;
   var opts = {
-    renderHandler: function(currTime) {
+      globalCompositeOperation: 'lighter',
+      renderHandler: function(currTime) {
       fps.putValue(1000 / (currTime - lastTime) );
       lastTime = currTime;
       document.getElementById('log').innerHTML = ~~fps.getValue() + 'fps';
