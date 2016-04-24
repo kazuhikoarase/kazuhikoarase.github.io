@@ -1,0 +1,32 @@
+
+* {
+  font-family: sans-serif;
+  font-size: 12pt;
+}
+
+.info {
+  margin: 4px;
+  background-color: #f0f0f0;
+}
+
+TABLE.info-tbl {
+  margin: 0px;
+  padding: 0px;
+  border-collapse: collapse;
+}
+
+TABLE.info-tbl,
+TABLE.info-tbl TH,
+TABLE.info-tbl TD {
+  font-weight: normal;
+  border-style: none;
+}
+
+TABLE.info-tbl TH,
+TABLE.info-tbl TD {
+  text-align: right;
+}
+
+TABLE.info-tbl TH {
+  padding-right: 4px;
+}
