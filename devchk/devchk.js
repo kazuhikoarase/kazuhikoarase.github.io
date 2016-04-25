@@ -50,7 +50,7 @@ $(function() {
         _w = w;
         _h = h;
         setSVGSize($svg, _w, _h);
-        $svg.html('');
+        $svg.children().remove();
         $svg.append(createX(_w, _h) );
       }
 
