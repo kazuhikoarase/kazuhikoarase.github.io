@@ -41,11 +41,39 @@ $(function() {
   }
 
   function createWorld() {
+
     var _w = 0;
     var _h = 0;
+    var ac0 = { absolute: false, alpha: 0, beta: 0, gamma: 0 };
+    var ac1 = { x: 0, y: 0, z: 0 };
+    var ac2 = { x: 0, y: 0, z: 0 };
+
+    window.addEventListener('deviceorientation', function(event) {
+      ac0 = event;
+    });
+
+    window.addEventListener('devicemotion', function(event) {
+      if (event.acceleration && event.acceleration.x != null) {
+        ac1 = event.acceleration;
+        ac2 = event.accelerationIncludingGravity;
+      }
+    });
+
+    function getTime() {
+      return +new Date();
+    }
+
+    var lastTime = getTime();
+
     function enterFrame(event) {
+
+      time = getTime();
+      var dt = time - lastTime;
+      lastTime = time;
+
       var w = $(window).width();
       var h = $(window).height();
+
       if (_w != w || _h != h) {
         _w = w;
         _h = h;
@@ -55,11 +83,14 @@ $(function() {
       }
 
       $info.html('');
+
       function addInfo(msg) {
-        $info.append($('<div></div>').addClass('info').text(msg) );
+        $info.append($('<div></div>').
+            addClass('box').text(msg) );
       }
 
       addInfo(navigator.userAgent);
+
       var tbl = [
         ['window-size', _w + 'x' + _h],
         ['do.absolute', ac0.absolute],
@@ -71,31 +102,20 @@ $(function() {
         ['dm.z', formatNumber(ac1.z)],
         ['dmIG.x', formatNumber(ac2.x)],
         ['dmIG.y', formatNumber(ac2.y)],
-        ['dmIG.z', formatNumber(ac2.z)]
+        ['dmIG.z', formatNumber(ac2.z)],
+        ['DeltaTime', formatNumber(dt)]
       ];
+
       var $tbody = $('<tbody></tbody>');
       for (var i = 0; i < tbl.length; i += 1) {
         $tbody.append($('<tr></tr>').
             append($('<th></th>').text(tbl[i][0] + ':') ).
             append($('<td></td>').text('' + tbl[i][1]) ) );
       }
-      $info.append($('<table></table>').
-          addClass('info-tbl').append($tbody) );
+      $info.append($('<div></div>').addClass('box').
+          append($('<table></table>').
+          addClass('info-tbl').append($tbody) ) );
     }
-
-    var ac0 = { absolute: false, alpha: 0, beta: 0, gamma: 0 };
-    var ac1 = { x: 0, y: 0, z: 0 };
-    var ac2 = { x: 0, y: 0, z: 0 };
-
-    window.addEventListener('deviceorientation', function(event) {
-      ac0 = event;
-    });
-    window.addEventListener('devicemotion', function(event) {
-      if (event.acceleration && event.acceleration.x != null) {
-        ac1 = event.acceleration;
-        ac2 = event.accelerationIncludingGravity;
-      }
-    });
 
     var $svg = createSVGElement('svg').css('position', 'absolute').
       css('left', '0px').css('top', '0px');
@@ -118,4 +138,11 @@ $(function() {
   }
   watch();
 
+/*  
+  function watch(timestamp) {
+    $w.trigger('enterFrame');
+    window.requestAnimationFrame(watch);
+  }
+  window.requestAnimationFrame(watch);
+*/
 });
