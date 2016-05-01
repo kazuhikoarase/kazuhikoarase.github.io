@@ -112,6 +112,8 @@ $(function() {
             append($('<th></th>').text(tbl[i][0] + ':') ).
             append($('<td></td>').text('' + tbl[i][1]) ) );
       }
+
+      $info.append($('<br/>') );
       $info.append($('<div></div>').addClass('box').
           append($('<table></table>').
           addClass('info-tbl').append($tbody) ) );
