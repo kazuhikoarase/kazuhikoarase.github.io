@@ -297,7 +297,7 @@
       height: 1000,
       allSegments: 'abcdefg',
       drawSegment: function(g, segment, color) {
-        if (color < 0) {
+        if (!color) {
           return;
         }
         var data = _SEGMENT_DATA[segment];
@@ -507,7 +507,7 @@
         device.$ui.append($seg);
   
         var update = function() {
-          var value = int = 0;
+          var value = 0;
           for (var i = 0; i < 4; i += 1) {
             if (isHot(device.getInputs()[i].getValue() ) ) {
               value += (1 << i);
