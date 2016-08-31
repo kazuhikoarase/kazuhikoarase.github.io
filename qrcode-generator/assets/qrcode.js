@@ -24,15 +24,15 @@ var qrcode = function() {
   /**
    * qrcode
    * @param typeNumber 1 to 40
-   * @param errorCorrectLevel 'L','M','Q','H'
+   * @param errorCorrectionLevel 'L','M','Q','H'
    */
-  var qrcode = function(typeNumber, errorCorrectLevel) {
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
 
     var PAD0 = 0xEC;
     var PAD1 = 0x11;
 
     var _typeNumber = typeNumber;
-    var _errorCorrectLevel = QRErrorCorrectLevel[errorCorrectLevel];
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
     var _modules = null;
     var _moduleCount = 0;
     var _dataCache = null;
@@ -66,7 +66,7 @@ var qrcode = function() {
       }
 
       if (_dataCache == null) {
-        _dataCache = createData(_typeNumber, _errorCorrectLevel, _dataList);
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
       }
 
       mapData(_dataCache, maskPattern);
@@ -178,7 +178,7 @@ var qrcode = function() {
 
     var setupTypeInfo = function(test, maskPattern) {
 
-      var data = (_errorCorrectLevel << 3) | maskPattern;
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
       var bits = QRUtil.getBCHTypeInfo(data);
 
       // vertical
@@ -329,9 +329,9 @@ var qrcode = function() {
       return data;
     };
 
-    var createData = function(typeNumber, errorCorrectLevel, dataList) {
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
 
-      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
 
       var buffer = qrBitBuffer();
 
@@ -442,6 +442,39 @@ var qrcode = function() {
       qrHtml += '</table>';
 
       return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg';
+      qrSvg += ' width="' + size + 'px"';
+      qrSvg += ' height="' + size + 'px"';
+      qrSvg += ' xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += '>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
     };
 
     _this.createImgTag = function(cellSize, margin) {
@@ -562,10 +595,10 @@ var qrcode = function() {
   };
 
   //---------------------------------------------------------------------
-  // QRErrorCorrectLevel
+  // QRErrorCorrectionLevel
   //---------------------------------------------------------------------
 
-  var QRErrorCorrectLevel = {
+  var QRErrorCorrectionLevel = {
     L : 1,
     M : 0,
     Q : 3,
@@ -1240,29 +1273,29 @@ var qrcode = function() {
 
     var _this = {};
 
-    var getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
 
-      switch(errorCorrectLevel) {
-      case QRErrorCorrectLevel.L :
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-      case QRErrorCorrectLevel.M :
+      case QRErrorCorrectionLevel.M :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-      case QRErrorCorrectLevel.Q :
+      case QRErrorCorrectionLevel.Q :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-      case QRErrorCorrectLevel.H :
+      case QRErrorCorrectionLevel.H :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
       default :
         return undefined;
       }
     };
 
-    _this.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
 
-      var rsBlock = getRsBlockTable(typeNumber, errorCorrectLevel);
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
 
       if (typeof rsBlock == 'undefined') {
         throw new Error('bad rs block @ typeNumber:' + typeNumber +
-            '/errorCorrectLevel:' + errorCorrectLevel);
+            '/errorCorrectionLevel:' + errorCorrectionLevel);
       }
 
       var length = rsBlock.length / 3;
