@@ -12,9 +12,15 @@ $(function() {
     { name: 'toZen', desc: '半角英数記号、カタカナを全角に変換' },
     { name: 'normalize', desc: '全角英数記号を半角に、半角カタカナを全角に変換' }
   ];
+
   var $inTxt = $('<input type="text" />').addClass('txt').
     attr('placeholder', 'ここに文字を入力').
     on('keyup', function(event) {
+      if (event.keyCode == 13) {
+        // ENTER
+        location.href = '#' + encodeURIComponent($inTxt.val() );
+        return;
+      }
       $.each(funcs, function(i, func) {
         $('#' + func.name).val(jaconv[func.name]($inTxt.val() ) );
       } );
@@ -36,5 +42,11 @@ $(function() {
         attr('tabindex', '-1').
         prop('readonly', true) );
   });
+
+  if (location.hash.match(/^#(.+)$/) ) {
+    $inTxt.val(decodeURIComponent(location.hash.substring(1) ) ).
+      trigger('keyup');
+  }
+  
   $inTxt.focus();
 });
