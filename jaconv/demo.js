@@ -1,7 +1,7 @@
 $(function() {
   
   var funcs = [
-    { name: 'toHebon', desc: '全角ひらがなをヘボン式で半角英文字に変換' },
+    { name: 'toHebon', desc: '全角ひらがなをヘボン式ローマ字で半角英文字に変換' },
     { name: 'toKatakana', desc: '全角ひらがなを全角カタカナに変換' },
     { name: 'toHiragana', desc: '全角カタカナを全角ひらがなに変換' },
     { name: 'toHanAscii', desc: '全角英数記号を半角に変換' },
