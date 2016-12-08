@@ -24,9 +24,15 @@
 
     var in1 = device.addInput();
     var out1 = device.addOutput();
-    device.$ui.on('inputValueChange', function() {
-      out1.setValue(in1.getValue() );
-    });
+    // set input value to output without inputValueChange event.
+    var in1_super_setValue = in1.setValue;
+    in1.setValue = function(value, force) {
+      var changed = in1.getValue() !== value;
+      in1_super_setValue(value, force);
+      if (changed || force) {
+        out1.setValue(in1.getValue() );
+      }
+    };
 
     var state = device.deviceDef.state || { direction : Direction.WE };
     device.getState = function() {
