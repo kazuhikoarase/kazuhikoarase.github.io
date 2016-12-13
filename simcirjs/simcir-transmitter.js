@@ -168,13 +168,14 @@
         super_createUI();
 
         var $point = $s.createSVGElement('circle').
-          css('pointer-events', 'none').css('opacity', 0).attr('r', 2);
+          css('pointer-events', 'none').
+          attr({cx: unit / 2, cy: unit / 2, r: 2});
         $s.addClass($point, 'simcir-connector');
         $s.addClass($point, 'simcir-joint-point');
         device.$ui.append($point);
 
         var $path = $s.createSVGElement('path').
-          css('pointer-events', 'none').css('opacity', 0);
+          css('pointer-events', 'none');
         $s.addClass($path, 'simcir-connector');
         device.$ui.append($path);
 
@@ -189,11 +190,6 @@
             x1 += d;
           }
           $path.attr('d', 'M' + x0 + ' ' + y0 + 'L' + x1 + ' ' + y1);
-
-          device.$ui.children('.simcir-device-body').
-            attr({x: 0, y: unit / 4, width: unit, height: unit / 2});
-          $point.attr({cx: unit / 2, cy: unit / 2});
-
         };
 
         updateUI();
@@ -219,8 +215,6 @@
         var setOpacity = function(opacity) {
           device.$ui.children('.simcir-device-body,.simcir-node').
             css('opacity', opacity);
-          $path.css('opacity', 1 - opacity);
-          $point.css('opacity', 1 - opacity);
         };
         var fadeout = function() {
           window.setTimeout(function() {
