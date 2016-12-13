@@ -86,6 +86,46 @@
       };
     };
 
+    var createPanel = function() {
+
+      var fontSize = 8;
+
+      var $rangeText = $s.createSVGElement('text').
+        css('stroke', 'none').
+        css('fill', '#000000').
+        css('font-size', fontSize + 'px').
+        attr({x : 4, y : (unit - fontSize) / 2 + fontSize});
+
+      var $range = $s.createSVGElement('g').
+        append($s.createSVGElement('rect').
+          css('stroke', 'none').
+          css('fill', '#999999').
+          attr({x : 0, y : 0, width: unit * 8, height : unit }) ).
+        append($rangeText).
+        on('mousedown', function(event) {
+          $panel.trigger('timeRangeDown');
+        });
+      $s.transform($range, unit * 1.5, 0);
+
+      var $btn = $s.createSVGElement('g').
+        append($s.createSVGElement('rect').
+          css('stroke', 'none').
+          css('fill', '#999999').
+          attr({x : 0, y : 0, width: unit, height : unit }) ).
+        on('mousedown', function(event) {
+          $panel.trigger('sampleDown');
+        });
+
+      var $panel = $s.createSVGElement('g').append($btn).append($range);
+
+      return {
+        $ui : $panel,
+        setTimeRange : function(timeRange) {
+          $rangeText.text('TimeRange: ' + timeRange + 'ms');
+        }
+      };
+    };
+
     return function(device) {
 
       var numInputs = 4;
@@ -98,7 +138,7 @@
 
       device.getSize = function() {
         return { width : unit * 4,
-          height : unit * (numInputs * scale + 2) };
+          height : unit * (numInputs * scale + 2.5) };
       };
 
       var super_createUI = device.createUI;
@@ -124,39 +164,20 @@
           probes.push(probe);
           $display.append(probe.$ui);
         }
-        var fontSize = 8;
+
         var rangeIndex = 0;
-        var $rangeText = $s.createSVGElement('text').
-          css('stroke', 'none').
-          css('fill', '#000000').
-          css('font-size', fontSize + 'px').attr({x : 2, y : fontSize + 2});
-        var $range = $s.createSVGElement('g').
-          append($s.createSVGElement('rect').
-              css('stroke', 'none').
-              css('fill', '#999999').
-              attr({x : 0, y : 0, width: unit * 8, height : unit }) ).
-          append($rangeText).
-          on('mousedown', function(event) {
+
+        var panel = createPanel();
+        panel.$ui.on('timeRangeDown', function(event) {
             var timeRange = timeRanges[rangeIndex];
             rangeIndex = (rangeIndex + 1) % timeRanges.length;
-            $rangeText.text('TimeRange: ' + timeRange + 'ms');
+            panel.setTimeRange(timeRange);
             for (var i = 0; i < probes.length; i += 1) {
               probes[i].setTimeRange(timeRange);
             }
-          }).trigger('mousedown');
-        $s.transform($range, unit * 2 + unit / 2,
-            unit * numInputs * scale + unit / 2);
-        device.$ui.append($range);
-
-        var $btn = $s.createSVGElement('g').
-          append($s.createSVGElement('rect').
-              css('stroke', 'none').
-              css('fill', '#999999').
-              attr({x : 0, y : 0, width: unit, height : unit }) );
-        $s.transform($btn, unit / 2,
-            unit * numInputs * scale + unit / 2);
-        device.$ui.append($btn);
-
+          }).trigger('timeRangeDown');
+        device.$ui.append(panel.$ui);
+        $s.transform(panel.$ui, unit / 2, unit * numInputs * scale + unit);
 
         var alive = false;
         var render = function(ts) {
@@ -172,18 +193,18 @@
 
         device.$ui.on('deviceAdd', function() {
 
-            device.$ui.children('.simcir-device-body').
-              attr('width', unit * 16);
-            device.$ui.children('.simcir-device-label').
-              attr('x', unit * 8);
-            $rect.attr('width', unit * 15);
+          device.$ui.children('.simcir-device-body').
+            attr('width', unit * 16);
+          device.$ui.children('.simcir-device-label').
+            attr('x', unit * 8);
+          $rect.attr('width', unit * 15);
 
-            alive = true;
-            window.requestAnimationFrame(render);
+          alive = true;
+          window.requestAnimationFrame(render);
 
-          }).on('deviceRemove', function() {
-            alive = false;
-          });
+        }).on('deviceRemove', function() {
+          alive = false;
+        });
       };
     };
   };
