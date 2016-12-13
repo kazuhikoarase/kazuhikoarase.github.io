@@ -9,6 +9,9 @@
 //  http://www.opensource.org/licenses/mit-license.php
 //
 
+// includes following device types:
+//  Transmitter
+
 'use strict';
 !function($, $s) {
 
@@ -18,10 +21,10 @@
   var createTransmitterFactory = function() {
 
     var emptyGroup = {
-        getValue : function() { return null; },
-        setValue : function(value, force) {},
-        getInput : function() { return null; },
-        setInput : function(device) {}
+      getValue : function() { return null; },
+      setValue : function(value, force) {},
+      getInput : function() { return null; },
+      setInput : function(device) {}
     };
 
     var createGroup = function(devices) {
