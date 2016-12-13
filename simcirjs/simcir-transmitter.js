@@ -170,29 +170,62 @@
       device.createUI = function() {
         super_createUI();
 
+        device.$ui.children('.simcir-device-body').
+          attr({x: 0, y: unit / 4, width: unit, height: unit / 2});
+
+        var $label = device.$ui.children('.simcir-device-label');
+        var defaultLabelX = +$label.attr('x');
+        var defaultLabelY = +$label.attr('y');
+
         var $point = $s.createSVGElement('circle').
-          css('pointer-events', 'none').
+          css('pointer-events', 'none').css('opacity', 0).
           attr({cx: unit / 2, cy: unit / 2, r: 2});
         $s.addClass($point, 'simcir-connector');
         $s.addClass($point, 'simcir-joint-point');
         device.$ui.append($point);
 
         var $path = $s.createSVGElement('path').
-          css('pointer-events', 'none');
+          css('pointer-events', 'none').css('opacity', 0);
         $s.addClass($path, 'simcir-connector');
         device.$ui.append($path);
 
         var updateUI = function() {
-          var x0, y0, x1, y1;
-          x0 = y0 = x1 = y1 = unit / 2;
+
+          var isInSet = in1.getOutput() != null;
+          var isOutSet = out1.getInputs().length > 0;
+
+          var x0, y0, x1, y1, cx, cy;
+          x0 = y0 = x1 = y1 = cx = cy = unit / 2;
           var d = unit / 2;
-          if (in1.getOutput() != null) {
-            x0 -= d;
+          x0 -= d;
+          x1 += d;
+          if (isInSet && isOutSet) {
+          } else if (isInSet) {
+            cx += d;
+          } else if (isOutSet) {
+            cx -= d;
           }
-          if (out1.getInputs().length > 0) {
-            x1 += d;
-          }
+          $point.attr('cx', cx).attr('cy', cy);
           $path.attr('d', 'M' + x0 + ' ' + y0 + 'L' + x1 + ' ' + y1);
+
+          var labelX = defaultLabelX;
+          var labelY = defaultLabelY;
+          var anchor = 'middle';
+          if (isInSet && isOutSet) {
+            labelY -= unit / 4;
+          } else if (!isInSet && !isOutSet) {
+            labelY -= unit / 4;
+          } else if (isInSet) {
+            labelX += unit;
+            labelY -= unit;
+            anchor = 'start';
+          } else if (isOutSet) {
+            labelX -= unit;
+            labelY -= unit;
+            anchor = 'end';
+          }
+          $label.attr('x', labelX).attr('y', labelY).
+            attr('text-anchor', anchor);
         };
 
         updateUI();
@@ -218,6 +251,8 @@
         var setOpacity = function(opacity) {
           device.$ui.children('.simcir-device-body,.simcir-node').
             css('opacity', opacity);
+          $path.css('opacity', 1 - opacity);
+          $point.css('opacity', 1 - opacity);
         };
         var fadeout = function() {
           window.setTimeout(function() {
