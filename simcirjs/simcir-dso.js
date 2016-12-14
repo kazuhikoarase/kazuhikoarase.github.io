@@ -12,8 +12,9 @@
 // includes following device types:
 //  DSO
 
-'use strict';
 !function($, $s) {
+
+  'use strict';
 
   // unit size
   var unit = $s.unit;
