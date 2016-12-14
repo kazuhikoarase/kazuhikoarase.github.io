@@ -1,5 +1,5 @@
 //
-// SimcirJS - transmitter
+// SimcirJS - DSO
 //
 // Copyright (c) 2016 Kazuhiko Arase
 //
@@ -10,7 +10,7 @@
 //
 
 // includes following device types:
-//  Transmitter
+//  DSO
 
 'use strict';
 !function($, $s) {
@@ -20,6 +20,14 @@
 
   var createDSOFactory = function() {
 
+    var colors = [
+      '#ff00cc',
+      '#ffcc00',
+      '#ccff00',
+      '#00ffcc',
+      '#00ccff',
+      '#cc00ff'
+    ];
     var timeRanges = [10000, 5000, 2000, 1000];
     var maxTimeRange = timeRanges[0];
 
@@ -129,14 +137,8 @@
         on('mousedown', function(event) {
           event.preventDefault();
           event.stopPropagation();
-          $(document).on('mouseup', btn_mouseupHandler);
-          $btnRect.css('opacity', 0.5);
           $panel.trigger('playDown');
         });
-      var btn_mouseupHandler = function(event) {
-        $(document).off('mouseup', btn_mouseupHandler);
-        $btnRect.css('opacity', 0);
-      };
 
       var $panel = $s.createSVGElement('g').
         append($btn).append($lcdPanel);
@@ -158,15 +160,6 @@
       };
     };
 
-    var colors = [
-      '#ff00cc',
-      '#ffcc00',
-      '#ccff00',
-      '#00ffcc',
-      '#00ccff',
-      '#cc00ff'
-    ];
-
     return function(device) {
 
       var numInputs = Math.max(1,
@@ -178,9 +171,15 @@
         device.addInput();
       }
 
+      var state = device.deviceDef.state ||
+        { playing : true, rangeIndex : 0 };
+      device.getState = function() {
+        return state;
+      };
+
       device.getSize = function() {
         return { width : unit * 4,
-          height : unit * (numInputs * scale + 2.5) };
+          height : unit * (numInputs * scale + 2) };
       };
 
       var super_createUI = device.createUI;
@@ -207,31 +206,33 @@
           $display.append(probe.$ui);
         }
 
-        var rangeIndex = 0;
-        var playing = false;
+        var setTimeRange = function(timeRange) {
+          panel.setTimeRange(timeRange);
+          for (var i = 0; i < probes.length; i += 1) {
+            probes[i].setTimeRange(timeRange);
+          }
+        };
 
         var panel = createPanel();
         panel.$ui.on('playDown', function(event){
-            playing = !playing;
-            panel.setPlaying(playing);
+            state.playing = !state.playing;
+            panel.setPlaying(state.playing);
           }).on('timeRangeDown', function(event) {
-            var timeRange = timeRanges[rangeIndex];
-            rangeIndex = (rangeIndex + 1) % timeRanges.length;
-            panel.setTimeRange(timeRange);
-            for (var i = 0; i < probes.length; i += 1) {
-              probes[i].setTimeRange(timeRange);
-            }
-          }).
-          trigger('playDown').
-          trigger('timeRangeDown');
+            state.rangeIndex = (state.rangeIndex + 1) % timeRanges.length;
+            setTimeRange(timeRanges[state.rangeIndex]);
+          });
         device.$ui.append(panel.$ui.css('display', 'none') );
-        $s.transform(panel.$ui, unit / 2, unit * numInputs * scale + unit);
+        $s.transform(panel.$ui, unit / 2,
+            unit * numInputs * scale + unit / 4 * 3);
+
+        panel.setPlaying(state.playing);
+        setTimeRange(timeRanges[state.rangeIndex] || timeRanges[0]);
 
         var alive = false;
         var render = function(ts) {
           for (var i = 0; i < device.getInputs().length; i += 1) {
             probes[i].sample(ts, device.getInputs()[i].getValue() );
-            if (playing) {
+            if (state.playing) {
               probes[i].update(ts, 0, unit * i * scale + gap,
                   unit * 15, unit * scale - gap * 2);
             }
@@ -256,6 +257,15 @@
         }).on('deviceRemove', function() {
           alive = false;
         });
+
+        device.doc = {
+          params: [
+            {name: 'numInputs', type: 'number',
+              defaultValue: 4,
+              description: 'number of inputs.'}
+          ],
+          code: '{"type":"' + device.deviceDef.type + '","numInputs":4}'
+        };
       };
     };
   };
