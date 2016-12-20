@@ -55,7 +55,7 @@
         model.timeRange = timeRange;
       };
 
-      var update = function(ts, x, y, width, height, rev) {
+      var update = function(ts, x, y, width, height) {
         var d = '';
         for (var i = samples.length - 1; i >= 0; i -= 1) {
           var last = i - 1 >= 0 && ts - samples[i - 1].ts > model.timeRange;
@@ -68,8 +68,7 @@
           if (typeof val != 'number') {
             val = 0;
           }
-          var sx = (ts - samples[i].ts) / model.timeRange * width;
-          sx = rev? x + width - sx : x + sx;
+          var sx = x + width - (ts - samples[i].ts) / model.timeRange * width;
           var sy = y + height - val / model.valueRange * height;
           d += d == ''? 'M' : 'L';
           d += sx + ' ' + sy;
@@ -168,7 +167,6 @@
           device.deviceDef.numInputs || 4);
       var scale = 1;
       var gap = 2;
-      var rev = false; // false: l-to-r, true: r-to-l
 
       for (var i = 0; i < numInputs; i += 1) {
         device.addInput();
@@ -237,7 +235,7 @@
             probes[i].sample(ts, device.getInputs()[i].getValue() );
             if (state.playing) {
               probes[i].update(ts, 0, unit * i * scale + gap,
-                  unit * 15, unit * scale - gap * 2, rev);
+                  unit * 15, unit * scale - gap * 2);
             }
           }
           if (alive) {
