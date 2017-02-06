@@ -56,12 +56,14 @@ window.onload = function() {
 
   var getTime = function() { return new Date().getTime(); };
   var lastTouch = getTime();
-  viewer.canvas.addEventListener('touchstart', function() {
-    var time = getTime();
-    if (time - lastTouch < 300) {
-      viewer.toggleFullscreen();
+  viewer.canvas.addEventListener('touchstart', function(event) {
+    if (event.touches.length == 1) {
+      var time = getTime();
+      if (time - lastTouch < 300) {
+        viewer.toggleFullscreen();
+      }
+      lastTouch = time;
     }
-    lastTouch = time;
   });
 
   document.body.appendChild(viewer.canvas);

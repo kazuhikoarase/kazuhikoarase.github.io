@@ -564,6 +564,7 @@ var spherical_viewer = function(opts) {
       }
 
       orgSize = { width : cv.width, height : cv.height };
+      document.body.style.overflow = 'hidden';
       cv.style.position = 'absolute';
       cv.style.left = '0px';
       cv.style.top = '0px';
@@ -574,6 +575,7 @@ var spherical_viewer = function(opts) {
 
         if (!fullscreened) {
           // exit fullscreen.
+          document.body.style.overflow = '';
           cv.style.position = '';
           cv.style.left = '';
           cv.style.top = '';
