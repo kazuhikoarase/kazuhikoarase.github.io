@@ -14,8 +14,8 @@ window.onload = function() {
   }(location.search? location.search.substring(1) : '');
 
   var imageUrl = document.getElementById('imageUrl');
-  if (params.src) {
-    imageUrl.value = params.src;
+  if (params.url) {
+    imageUrl.value = params.url;
   }
   var getUrl = document.getElementById('getUrl');
   getUrl.addEventListener('click', function(event) {
@@ -25,7 +25,7 @@ window.onload = function() {
   });
 
   var opts = {
-    src : params.src || 'my-picture.jpg',
+    src : params.url || 'my-picture.jpg',
     maxTextureSize : 2048
   };
   var viewer = spherical_viewer(opts);
