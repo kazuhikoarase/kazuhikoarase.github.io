@@ -26,6 +26,9 @@ window.onload = function() {
       ptz.p = normalizeAngle(ptz.p);
       location.href = '?url=' + encodeURIComponent(imageUrl.value) + 
         '&p=' + ptz.p + '&t=' + ptz.t + '&z=' + ptz.z;
+    } else {
+      viewer.toggleFullscreen();
+      
     }
   });
 
