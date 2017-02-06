@@ -21,6 +21,7 @@ window.onload = function() {
   getUrl.addEventListener('click', function(event) {
     if (imageUrl.value) {
       var ptz = viewer.getPTZ();
+      ptz.p = normalizeAngle(p);
       location.href = '?url=' + encodeURIComponent(imageUrl.value) + 
         '&p=' + ptz.p + '&t=' + ptz.t + '&z=' + ptz.z;
     }
@@ -28,11 +29,23 @@ window.onload = function() {
 
   var opts = {
     src : params.url || 'my-picture.jpg',
-    p : params.p? +params.p : 0,
-    t : params.t? +params.t : 0,
-    z : params.z? +params.z : 0,
     maxTextureSize : 2048
   };
+  
+  var normalizeAngle = function(p) {
+    var _2PI = Math.PI * 2;
+    while (p < 0) { p += _2PI; }
+    while (p >= _2PI) { p -= _2PI; }
+    return p;
+  };
+
+  var ptz = {
+    p : params.p? +params.p : 0,
+    t : params.t? +params.t : 0,
+    z : params.z? +params.z : 0
+  };
+  ptz.p = normalizeAngle(p);
+
   var viewer = spherical_viewer(opts);
   viewer.canvas.addEventListener('dblclick', function() {
     viewer.toggleFullscreen();
