@@ -53,5 +53,16 @@ window.onload = function() {
   viewer.canvas.addEventListener('dblclick', function() {
     viewer.toggleFullscreen();
   });
+
+  var getTime = function() { return new Date().getTime(); };
+  var lastTouch = getTime();
+  viewer.canvas.addEventListener('touchstart', function() {
+    var time = getTime();
+    if (time - lastTouch < 300) {
+      viewer.toggleFullscreen();
+    }
+    lastTouch = time;
+  });
+
   document.body.appendChild(viewer.canvas);
 };
