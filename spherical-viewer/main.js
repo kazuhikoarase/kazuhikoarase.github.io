@@ -20,12 +20,17 @@ window.onload = function() {
   var getUrl = document.getElementById('getUrl');
   getUrl.addEventListener('click', function(event) {
     if (imageUrl.value) {
-      location.href = '?url=' + encodeURIComponent(imageUrl.value);
+      var ptz = viewer.getPTZ();
+      location.href = '?url=' + encodeURIComponent(imageUrl.value) + 
+        '&p=' + ptz.p + '&t=' + ptz.t + '&z=' + ptz.z;
     }
   });
 
   var opts = {
     src : params.url || 'my-picture.jpg',
+    p : params.p? +params.p : 0,
+    t : params.t? +params.t : 0,
+    z : params.z? +params.z : 0,
     maxTextureSize : 2048
   };
   var viewer = spherical_viewer(opts);
