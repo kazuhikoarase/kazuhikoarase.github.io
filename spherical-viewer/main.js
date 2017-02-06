@@ -14,7 +14,7 @@ window.onload = function() {
   }(location.search? location.search.substring(1) : '');
 
   var imageUrl = document.getElementById('imageUrl');
-  var getUrl = document.getElementById('imageUrl');
+  var getUrl = document.getElementById('getUrl');
   getUrl.addEventListener('click', function(event) {
     if (imageUrl.value) {
       location.href = '?url=' + encodeURIComponent(imageUrl.value);
