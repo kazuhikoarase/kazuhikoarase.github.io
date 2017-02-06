@@ -1,4 +1,7 @@
+
 window.onload = function() {
+
+  'use strict';
 
   var params = function(query_string) {
     var params = {};
@@ -7,7 +10,6 @@ window.onload = function() {
       var kv = kvList[i].split(/=/);
       if (kv.length == 2) {
         params[kv[0]] = decodeURIComponent(kv[1]);
-        encodeURIComponent('/?&');
       }
     }
     return params;
