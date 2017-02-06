@@ -21,7 +21,7 @@ window.onload = function() {
   getUrl.addEventListener('click', function(event) {
     if (imageUrl.value) {
       var ptz = viewer.getPTZ();
-      ptz.p = normalizeAngle(p);
+      ptz.p = normalizeAngle(ptz.p);
       location.href = '?url=' + encodeURIComponent(imageUrl.value) + 
         '&p=' + ptz.p + '&t=' + ptz.t + '&z=' + ptz.z;
     }
@@ -44,9 +44,10 @@ window.onload = function() {
     t : params.t? +params.t : 0,
     z : params.z? +params.z : 0
   };
-  ptz.p = normalizeAngle(p);
+  ptz.p = normalizeAngle(ptz.p);
 
   var viewer = spherical_viewer(opts);
+  viewer.setPTZ(ptz.p, ptz.t, ptz.z);
   viewer.canvas.addEventListener('dblclick', function() {
     viewer.toggleFullscreen();
   });
