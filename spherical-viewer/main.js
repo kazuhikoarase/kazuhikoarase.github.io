@@ -15,25 +15,28 @@ window.onload = function() {
     return params;
   }(location.search? location.search.substring(1) : '');
 
+  var sv_params = params.sv_params? JSON.parse(params.sv_params) : {};
+  sv_params.url = sv_params.url || 'my-picture.jpg';
+
   var imageUrl = document.getElementById('imageUrl');
-  if (params.url) {
-    imageUrl.value = params.url;
-  }
+  imageUrl.value = sv_params.url;
+
   var getUrl = document.getElementById('getUrl');
   getUrl.addEventListener('click', function(event) {
     if (imageUrl.value) {
       var ptz = viewer.getPTZ();
       ptz.p = normalizeAngle(ptz.p);
-      location.href = '?url=' + encodeURIComponent(imageUrl.value) + 
-        '&p=' + ptz.p + '&t=' + ptz.t + '&z=' + ptz.z;
+      location.href = '?sv_params=' + encodeURIComponent(JSON.stringify({
+        url : imageUrl.value, p : ptz.p, t : ptz.t, z : ptz.z
+      }) );
     }
   });
 
   var opts = {
-    src : params.url || 'my-picture.jpg',
+    src : sv_params.url,
     maxTextureSize : 2048
   };
-  
+
   var normalizeAngle = function(p) {
     var _2PI = Math.PI * 2;
     while (p < 0) { p += _2PI; }
