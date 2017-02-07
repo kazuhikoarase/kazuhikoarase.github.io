@@ -21,7 +21,6 @@ window.onload = function() {
     return function(event) {
       if (event.touches.length == 1) {
         var time = getTime();
-        console.log(time - lastTap);
         if (time - lastTap < 300) {
           handler(event);
         }
