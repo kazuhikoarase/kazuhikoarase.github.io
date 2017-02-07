@@ -17,6 +17,9 @@ window.onload = function() {
 
   var sv_params = params.sv_params? JSON.parse(params.sv_params) : {};
   sv_params.url = sv_params.url || 'my-picture.jpg';
+  sv_params.p = sv_params.p || 0;
+  sv_params.t = sv_params.t || 0;
+  sv_params.z = sv_params.z || 0;
 
   var imageUrl = document.getElementById('imageUrl');
   imageUrl.value = sv_params.url;
@@ -45,9 +48,9 @@ window.onload = function() {
   };
 
   var ptz = {
-    p : params.p? +params.p : 0,
-    t : params.t? +params.t : 0,
-    z : params.z? +params.z : 0
+    p : sv_params.p,
+    t : sv_params.t,
+    z : sv_params.z
   };
   ptz.p = normalizeAngle(ptz.p);
 
