@@ -15,6 +15,28 @@ window.onload = function() {
     return params;
   }(location.search? location.search.substring(1) : '');
 
+  var dbltap = function(handler) {
+    var getTime = function() { return new Date().getTime(); };
+    var lastTap = getTime();
+    return function(event) {
+      if (event.touches.length == 1) {
+        var time = getTime();
+        console.log(time - lastTap);
+        if (time - lastTap < 300) {
+          handler(event);
+        }
+        lastTap = time;
+      }
+    };
+  };
+
+  var normalizeAngle = function(p) {
+    var _2PI = Math.PI * 2;
+    while (p < 0) { p += _2PI; }
+    while (p >= _2PI) { p -= _2PI; }
+    return p;
+  };
+
   var sv_params = params.sv_params? JSON.parse(params.sv_params) : {};
   sv_params.url = sv_params.url || 'my-picture.jpg';
   sv_params.p = sv_params.p || 0;
@@ -40,13 +62,6 @@ window.onload = function() {
     maxTextureSize : 2048
   };
 
-  var normalizeAngle = function(p) {
-    var _2PI = Math.PI * 2;
-    while (p < 0) { p += _2PI; }
-    while (p >= _2PI) { p -= _2PI; }
-    return p;
-  };
-
   var ptz = {
     p : sv_params.p,
     t : sv_params.t,
@@ -59,18 +74,8 @@ window.onload = function() {
   viewer.canvas.addEventListener('dblclick', function() {
     viewer.toggleFullscreen();
   });
-
-  var getTime = function() { return new Date().getTime(); };
-  var lastTouch = getTime();
-  viewer.canvas.addEventListener('touchstart', function(event) {
-    if (event.touches.length == 1) {
-      var time = getTime();
-      if (time - lastTouch < 300) {
-        viewer.toggleFullscreen();
-      }
-      lastTouch = time;
-    }
-  });
-
+  viewer.canvas.addEventListener('touchstart', dbltap(function(event) {
+    viewer.toggleFullscreen();
+  } ) );
   document.body.appendChild(viewer.canvas);
 };
