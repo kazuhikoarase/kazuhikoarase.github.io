@@ -231,7 +231,7 @@ var spherical_viewer = function(opts) {
     ctx.fillStyle = '#666666';
     ctx.fillRect(0, 0, size, size >> 1);
 
-    var hDiv = 8;
+    var hDiv = 1 << 8;
     var vDiv = hDiv / 2;
     var unit = size / hDiv;
     var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffcc00'];
@@ -297,6 +297,7 @@ var spherical_viewer = function(opts) {
     var addPoint = function(h, v, vOffset) {
       var p = 2 * Math.PI * h / hDiv;
       var t = Math.PI * ( (v + vOffset) / vDiv - 0.5); 
+      t = Math.sin(t) * Math.PI / 2; // liner to sine (-1 ~ 1)
       vt.push(Math.cos(p) * Math.cos(t) );
       vt.push(Math.sin(t) );
       vt.push(Math.sin(p) * Math.cos(t) );
