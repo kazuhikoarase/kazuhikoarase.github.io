@@ -76,5 +76,6 @@ window.onload = function() {
   viewer.canvas.addEventListener('touchstart', dbltap(function(event) {
     viewer.toggleFullscreen();
   } ) );
-  document.body.appendChild(viewer.canvas);
+
+  document.getElementById('placeHolder').appendChild(viewer.canvas);
 };
