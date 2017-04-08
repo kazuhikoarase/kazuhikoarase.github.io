@@ -37,7 +37,7 @@ window.onload = function() {
   };
 
   var sv_params = params.sv_params? JSON.parse(params.sv_params) : {};
-  sv_params.url = sv_params.url || 'my-picture.jpg';
+  sv_params.url = sv_params.url || 'ueno_park.jpg';
   sv_params.p = sv_params.p || 0;
   sv_params.t = sv_params.t || 0;
   sv_params.z = sv_params.z || 0;
