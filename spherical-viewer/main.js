@@ -3,7 +3,7 @@ window.onload = function() {
 
   'use strict';
 
-  var defaultSearch = 'sv_params=%7B"url"%3A"ueno_park.jpg"%2C"p"%3A6.144685416927639%2C"t"%3A0.02010945165123477%2C"z"%3A1.2313168871259323%7D';
+  var defaultSearch = 'sv_params=%7B"url"%3A"ueno_park.jpg"%2C"p"%3A6.280037736603383%2C"t"%3A0.0919850731126215%2C"z"%3A0.6704468055668809%7D';
 
   var params = function(query_string) {
     var params = {};
