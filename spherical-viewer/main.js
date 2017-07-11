@@ -58,11 +58,6 @@ window.onload = function() {
     }
   });
 
-  var opts = {
-    src : sv_params.url,
-    maxTextureSize : 2048
-  };
-
   var ptz = {
     p : sv_params.p,
     t : sv_params.t,
@@ -70,14 +65,81 @@ window.onload = function() {
   };
   ptz.p = normalizeAngle(ptz.p);
 
-  var viewer = spherical_viewer(opts);
-  viewer.setPTZ(ptz.p, ptz.t, ptz.z);
-  viewer.canvas.addEventListener('dblclick', function() {
-    viewer.toggleFullscreen();
-  });
-  viewer.canvas.addEventListener('touchstart', dbltap(function(event) {
-    viewer.toggleFullscreen();
-  } ) );
+  var img_loadHandler = function() {
+    var size = 2048;
+    var w = size;
+    var h = size >> 1;
+    var cv = document.createElement('canvas');
+    cv.setAttribute('width', '' + w);
+    cv.setAttribute('height', '' + h);
+    var ctx = cv.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    var viewer = spherical_viewer({ src : cv,
+      width : viewerWidth, height : viewerHeight });
+    viewer.setPTZ(ptz.p, ptz.t, ptz.z);
+    viewer.canvas.addEventListener('dblclick', function() {
+      viewer.toggleFullscreen();
+    });
+    viewer.canvas.addEventListener('touchstart', dbltap(function(event) {
+      viewer.toggleFullscreen();
+    } ) );
+    document.getElementById('placeHolder').replaceChild(viewer.canvas, tmpCv);
+    loading = false;
+  };
 
-  document.getElementById('placeHolder').appendChild(viewer.canvas);
+  var viewerWidth = 640;
+  var viewerHeight = 360;
+  var loading = true;
+  var lastTime = 0;
+  var alphas = function() {
+    var a = [];
+    for (var i = 0; i < 24; i += 1) {
+      a.push(0);
+    }
+    return a;
+  }();
+  var count = 0;
+
+  var loadingAnimation = function(time) {
+    if (lastTime == 0) {
+      lastTime = time;
+    } else if (time - lastTime > 100){
+      alphas[count] = 1;
+      count = (count + 1) % alphas.length;
+      lastTime = time;
+      tmpCtx.fillRect(0, 0, viewerWidth, viewerHeight);
+      var r1 = 100;
+      var r2 = 30;
+      var cx = viewerWidth / 2;
+      var cy = viewerHeight / 2;
+      for (var i = 0; i < alphas.length; i += 1) {
+        var t = 2 * Math.PI * i / alphas.length;
+        tmpCtx.beginPath();
+        tmpCtx.strokeStyle = 'rgba(255,255,255,' + alphas[i] + ')';
+        tmpCtx.moveTo(Math.cos(t) * r1 + cx, Math.sin(t) * r1 + cy);
+        tmpCtx.lineTo(Math.cos(t) * r2 + cx, Math.sin(t) * r2 + cy);
+        tmpCtx.closePath();
+        tmpCtx.stroke();
+        alphas[i] = Math.max(0, alphas[i] - 0.05);
+      }
+    }
+    if (loading) {
+      window.requestAnimationFrame(loadingAnimation);
+    }
+  };
+
+  var tmpCv = document.createElement('canvas');
+  tmpCv.setAttribute('width', '' + viewerWidth);
+  tmpCv.setAttribute('height', '' + viewerHeight);
+  var tmpCtx = tmpCv.getContext('2d');
+  tmpCtx.fillStyle = '#666666';
+  tmpCtx.lineWidth = 4;
+  tmpCtx.fillRect(0, 0, viewerWidth, viewerHeight);
+  document.getElementById('placeHolder').appendChild(tmpCv);
+  window.requestAnimationFrame(loadingAnimation);
+
+  var img = new Image();
+  img.addEventListener('load', img_loadHandler);
+  img.crossOrigin = 'anonymous';
+  img.src = sv_params.url;
 };
