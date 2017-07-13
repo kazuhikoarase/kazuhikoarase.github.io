@@ -113,7 +113,7 @@ window.onload = function() {
       var cx = viewerWidth / 2;
       var cy = viewerHeight / 2;
       for (var i = 0; i < alphas.length; i += 1) {
-        var t = 2 * Math.PI * i / alphas.length;
+        var t = 2 * Math.PI * i / alphas.length - Math.PI / 2;
         tmpCtx.beginPath();
         tmpCtx.strokeStyle = 'rgba(255,255,255,' + alphas[i] + ')';
         tmpCtx.moveTo(Math.cos(t) * r1 + cx, Math.sin(t) * r1 + cy);
