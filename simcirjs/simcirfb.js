@@ -12,7 +12,6 @@ $(function() {
   };
 
   var setup = function(data) {
-    $simcir.children().remove();
     $s.setupSimcir($simcir, 
       $.extend(data || {}, {width: 800, height: 400}) );
     lastData = getCircuitData();
