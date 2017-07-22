@@ -93,7 +93,7 @@ window.onload = function() {
   var lastTime = 0;
   var alphas = function() {
     var a = [];
-    for (var i = 0; i < 24; i += 1) {
+    for (var i = 0; i < 18; i += 1) {
       a.push(0);
     }
     return a;
@@ -108,17 +108,17 @@ window.onload = function() {
       count = (count + 1) % alphas.length;
       lastTime = time;
       tmpCtx.fillRect(0, 0, viewerWidth, viewerHeight);
-      var r1 = 100;
-      var r2 = 30;
+      var r1 = 30;
+      var r2 = 12;
       var cx = viewerWidth / 2;
       var cy = viewerHeight / 2;
       for (var i = 0; i < alphas.length; i += 1) {
         var t = 2 * Math.PI * i / alphas.length - Math.PI / 2;
         tmpCtx.beginPath();
-        tmpCtx.strokeStyle = 'rgba(255,255,255,' + alphas[i] + ')';
         tmpCtx.moveTo(Math.cos(t) * r1 + cx, Math.sin(t) * r1 + cy);
         tmpCtx.lineTo(Math.cos(t) * r2 + cx, Math.sin(t) * r2 + cy);
         tmpCtx.closePath();
+        tmpCtx.strokeStyle = 'rgba(255,255,255,' + alphas[i] + ')';
         tmpCtx.stroke();
         alphas[i] = Math.max(0, alphas[i] - 0.05);
       }
@@ -133,8 +133,10 @@ window.onload = function() {
   tmpCv.setAttribute('height', '' + viewerHeight);
   var tmpCtx = tmpCv.getContext('2d');
   tmpCtx.fillStyle = '#666666';
-  tmpCtx.lineWidth = 4;
   tmpCtx.fillRect(0, 0, viewerWidth, viewerHeight);
+  tmpCtx.lineWidth = 4;
+  tmpCtx.lineJoin = 'round';
+  tmpCtx.lineCap = 'round';
   document.getElementById('placeHolder').appendChild(tmpCv);
   window.requestAnimationFrame(loadingAnimation);
 
