@@ -11,7 +11,7 @@
   <title itemprop="name">QR Code Generator</title>
 </head>
 
-<body onload="update_qrcode()" >
+<body onload="body_loadHander()" >
 
 <a href="/">home</a>
 
@@ -71,7 +71,8 @@
     <input type="button" value="update" onclick="update_qrcode()"/>
     <div id="qr"></div>
   </form>
-
+  <h3>Appendix (data capacity in bytes)</h3>
+  <div id="dataCaps"></div>
 </div>
 
 <div class="section">
@@ -89,19 +90,6 @@
 <div class="page-footer">
 Contents Copyright &copy; Kazuhiko Arase
 </div>
-
-<script type="text/javascript">
-!function() {
-  var t = document.forms['qrForm'].elements['t'];
-  for (var i = 1; i <= 40; i += 1) {
-    var opt = document.createElement('option');
-    opt.appendChild(document.createTextNode(''+ i) );
-    opt.value = '' + i;
-    t.appendChild(opt);
-  }
-  t.value = '4';
-}();
-</script>
 
 </body>
 

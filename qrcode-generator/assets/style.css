@@ -1,6 +1,6 @@
 BODY, TH, TD {
-	font-size: 10pt;
-	font-family: Verdana, Arial, sans-serif;
+  font-size: 10pt;
+  font-family: Verdana, Arial, sans-serif;
 }
 
 H1 { font-size: 18pt; }
@@ -11,19 +11,31 @@ H5 { font-size: 9pt; }
 H6 { font-size: 8pt; }
 
 BODY {
-	color: #333333;
-	background-color: #ffffff;
+  color: #333333;
+  background-color: #ffffff;
 }
 
 DIV.page-header {
-	margin: 16px 0px 16px 0px;
+  margin: 16px 0px 16px 0px;
 }
 
 DIV.page-footer {
-	margin: 16px 0px 16px 0px;
-	text-align: right;
+  margin: 16px 0px 16px 0px;
+  text-align: right;
 }
 
 DIV.section {
-	margin: 16px 0px 16px 0px;
+  margin: 16px 0px 16px 0px;
+}
+
+#dataCaps TABLE {
+  border-collapse: collapse;
+}
+
+#dataCaps TABLE,
+#dataCaps TABLE TH,
+#dataCaps TABLE TD {
+  margin: 0px;
+  padding: 0px 4px 0px 4px;
+  border: 1px solid #000000;
 }
