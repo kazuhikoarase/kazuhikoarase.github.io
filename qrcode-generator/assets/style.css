@@ -1,4 +1,4 @@
-BODY, TH, TD {
+BODY, TH, TD, INPUT, SELECT, TEXTAREA {
   font-size: 10pt;
   font-family: Verdana, Arial, sans-serif;
 }
