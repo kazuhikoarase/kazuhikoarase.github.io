@@ -84,7 +84,7 @@ var createDataCapsTable = function() {
     for (var m = 0; m < 4; m += 1) {
       for (var e = 0; e < 4; e += 1) {
         var th = document.createElement('th');
-        th.style.backgroundColor = getCellBg(m, e);
+        th.style.backgroundColor = getCellBg(m, e % 2);
         th.style.textAlign = 'center';
         th.appendChild(document.createTextNode(ecls[e]) );
         tr.appendChild(th);
@@ -105,7 +105,7 @@ var createDataCapsTable = function() {
     for (var m = 0; m < 4; m += 1) {
       for (var e = 0; e < 4; e += 1) {
         var td = document.createElement('td');
-        td.style.backgroundColor = getCellBg(m, e);
+        td.style.backgroundColor = getCellBg(m, e % 2);
         td.style.textAlign = 'right';
         td.appendChild(document.createTextNode(''+ DATA_CAPS[t][m][e]) );
         tr.appendChild(td);
