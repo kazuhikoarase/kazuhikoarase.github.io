@@ -1,3 +1,6 @@
+
+var $ = lessQuery;
+
 $(function() {
 
   function formatNumber(n) {
@@ -53,11 +56,11 @@ $(function() {
     }
     var _lastTime = getTime();
 
-    window.addEventListener('deviceorientation', function(event) {
+    $(window).on('deviceorientation', function(event) {
       _ac0 = event;
     });
 
-    window.addEventListener('devicemotion', function(event) {
+    $(window).on('devicemotion', function(event) {
       if (event.acceleration && event.acceleration.x != null) {
         _ac1 = event.acceleration;
         _ac2 = event.accelerationIncludingGravity;
