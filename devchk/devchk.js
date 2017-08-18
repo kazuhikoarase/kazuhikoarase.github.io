@@ -70,7 +70,7 @@ $(function() {
 
     var enterFrame = function(event) {
 
-      time = getTime();
+      var time = getTime();
       var dt = time - _lastTime;
       _lastTime = time;
 
