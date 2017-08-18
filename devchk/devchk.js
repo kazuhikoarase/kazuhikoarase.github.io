@@ -1,9 +1,10 @@
+'use strict';
 
 var $ = lessQuery;
 
 $(function() {
 
-  function formatNumber(n) {
+  var formatNumber = function(n) {
     var digit = 2;
     var d = 1;
     for (var t = 0; t < digit; t += 1) { d *= 10; }
@@ -17,33 +18,33 @@ $(function() {
       f = '0' + f;
     }
     return i + '.' + f;
-  }
+  };
 
   $('BODY').css('margin', '0px').
     css('padding', '0px').css('overflow', 'hidden');
 
-  function createSVGElement(tagName) {
+  var createSVGElement = function(tagName) {
     return $(document.createElementNS(
         'http:/' + '/www.w3.org/2000/svg', tagName) );
-  }
+  };
 
-  function setSVGSize(svg, width, height) {
+  var setSVGSize = function(svg, width, height) {
     return svg.attr({
       version: '1.1',
       width: width, height: height,
       viewBox: '0 0 ' + width + ' ' + height
     });
-  }
+  };
 
-  function createX(w, h) {
+  var createX = function(w, h) {
     return createSVGElement('path').
       attr('fill', 'none').
       attr('stroke', '#0000ff').
       attr('d', 'M 0 0 L ' + w + ' ' + h +
         ' M 0 ' + h + ' L ' + w + ' 0');
-  }
+  };
 
-  function createWorld() {
+  var createWorld = function() {
 
     var _w = 0;
     var _h = 0;
@@ -51,9 +52,9 @@ $(function() {
     var _ac1 = { x: 0, y: 0, z: 0 };
     var _ac2 = { x: 0, y: 0, z: 0 };
 
-    function getTime() {
+    var getTime = function() {
       return +new Date();
-    }
+    };
     var _lastTime = getTime();
 
     $(window).on('deviceorientation', function(event) {
@@ -67,7 +68,7 @@ $(function() {
       }
     });
 
-    function enterFrame(event) {
+    var enterFrame = function(event) {
 
       time = getTime();
       var dt = time - _lastTime;
@@ -86,10 +87,10 @@ $(function() {
 
       $info.html('');
 
-      function addInfo(msg) {
+      var addInfo = function(msg) {
         $info.append($('<div></div>').
             addClass('box').text(msg) );
-      }
+      };
 
       addInfo(navigator.userAgent);
 
@@ -119,7 +120,7 @@ $(function() {
         append($('<div></div>').addClass('box').
         append($('<table></table>').
         addClass('info-tbl').append($tbody) ) );
-    }
+    };
 
     var $svg = createSVGElement('svg').css('position', 'absolute').
       css('left', '0px').css('top', '0px');
@@ -131,15 +132,15 @@ $(function() {
       append($info).
       on('enterFrame', enterFrame);
     return $body;
-  }
+  };
 
   var $w = createWorld();
   $('#ph').append($w);
 
-  function watch() {
+  var watch = function() {
     $w.trigger('enterFrame');
     window.setTimeout(watch, 50);
-  }
+  };
   watch();
 
 /*  
