@@ -107,7 +107,7 @@ var createDataCapsTable = function() {
         var td = document.createElement('td');
         td.style.backgroundColor = getCellBg(m, e % 2);
         td.style.textAlign = 'right';
-        td.appendChild(document.createTextNode(''+ DATA_CAPS[t][m][e]) );
+        td.appendChild(document.createTextNode(''+ DATA_CAPS[t][e][m]) );
         tr.appendChild(td);
       }
     }
