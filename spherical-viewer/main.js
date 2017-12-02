@@ -74,7 +74,7 @@ window.onload = function() {
     cv.setAttribute('height', '' + h);
     var ctx = cv.getContext('2d');
     ctx.drawImage(img, 0, 0, w, h);
-    var viewer = spherical_viewer({ src : cv,
+    viewer = spherical_viewer({ src : cv,
       width : viewerWidth, height : viewerHeight });
     viewer.setPTZ(ptz.p, ptz.t, ptz.z);
     viewer.canvas.addEventListener('dblclick', function() {
@@ -87,6 +87,7 @@ window.onload = function() {
     loading = false;
   };
 
+  var viewer = null;
   var viewerWidth = 640;
   var viewerHeight = 360;
   var loading = true;
