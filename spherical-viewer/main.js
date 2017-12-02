@@ -47,17 +47,6 @@ window.onload = function() {
   var imageUrl = document.getElementById('imageUrl');
   imageUrl.value = sv_params.url;
 
-  var getUrl = document.getElementById('getUrl');
-  getUrl.addEventListener('click', function(event) {
-    if (imageUrl.value) {
-      var ptz = viewer.getPTZ();
-      ptz.p = normalizeAngle(ptz.p);
-      location.href = '?sv_params=' + encodeURIComponent(JSON.stringify({
-        url : imageUrl.value, p : ptz.p, t : ptz.t, z : ptz.z
-      }) );
-    }
-  });
-
   var ptz = {
     p : sv_params.p,
     t : sv_params.t,
@@ -85,6 +74,17 @@ window.onload = function() {
     } ) );
     document.getElementById('placeHolder').replaceChild(viewer.canvas, tmpCv);
     loading = false;
+
+    var getUrl = document.getElementById('getUrl');
+    getUrl.addEventListener('click', function(event) {
+      if (imageUrl.value) {
+        var ptz = viewer.getPTZ();
+        ptz.p = normalizeAngle(ptz.p);
+        location.href = '?sv_params=' + encodeURIComponent(JSON.stringify({
+          url : imageUrl.value, p : ptz.p, t : ptz.t, z : ptz.z
+        }) );
+      }
+    });
   };
 
   var viewerWidth = 640;
