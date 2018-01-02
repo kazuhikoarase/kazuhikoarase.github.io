@@ -401,15 +401,15 @@ var spherical_viewer = function(opts) {
         p.delta(dt);
         t.delta(dt);
         z.delta(dt);
+        if (!model.dragging) {
+          setPTZ(p.val(), t.val(), z.val() );
+        }
         var v = Math.sqrt(model.vp * model.vp +
             model.vt * model.vt + model.vz * model.vz);
         if (v < limit) {
           model.vp = 0;
           model.vt = 0;
           model.vz = 0;
-        }
-        if (!model.dragging) {
-          setPTZ(p.val(), t.val(), z.val() );
         }
       }
       last = { p : model.p, t : model.t, z : model.z };
