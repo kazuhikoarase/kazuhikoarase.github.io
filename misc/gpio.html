@@ -24,7 +24,9 @@ TABLE.gpio .pin39 { background-color: rgba(0,192,0,0.3); }
 TABLE.gpio TR:nth-child(odd) {
   background-color: rgba(0,0,0,0.05);
 }
-
+.side0 {
+ text-align: right;
+}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <title>RASPI-GPIO</title>
@@ -35,14 +37,14 @@ TABLE.gpio TR:nth-child(odd) {
     <tr v-for="i in range(0, 19)" >
       <template v-for="j in range(0, 1)">
         <template v-if="j == 0">
-	        <td :class="'pin' + (i * 2 + j + 1)"
-	          style="text-align:right;">{{pins[i * 2 + j]}}</td>
-	        <td :class="'pin' + (i * 2 + j + 1)"
-	          style="text-align:right;">{{i * 2 + j + 1}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].gpio}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].name}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].pin}}</td>
         </template>
         <template v-if="j == 1">
-	        <td :class="'pin' + (i * 2 + j + 1)">{{i * 2 + j + 1}}</td>
-	        <td :class="'pin' + (i * 2 + j + 1)">{{pins[i * 2 + j]}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].pin}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].name}}</td>
+          <td :class="pinClass(i, j)">{{pins[i * 2 + j].gpio}}</td>
         </template>
       </template>
     </tr>
@@ -53,49 +55,47 @@ TABLE.gpio TR:nth-child(odd) {
 'use strict';
 
 var GPIO_PINS = [
-  '3.3v',
-  '5v',
-  'SDA.1',
-  '5v',
-  'SCL.1',
-  '0v',
-  'GPIO. 7',
-  'TxD',
-  '0v',
-  'RxD',
-  'GPIO. 0',
-  'GPIO. 1',
-  'GPIO. 2',
-  '0v',
-  'GPIO. 3',
-  'GPIO. 4',
-  '3.3v',
-  'GPIO. 5',
-  'MOSI',
-  '0v',
-  'MISO',
-  'GPIO. 6',
-  'SCLK',
-  'CE0',
-  '0v',
-  'CE1',
-  'SDA.0',
-  'SCL.0',
-  'GPIO.21',
-  '0v',
-  'GPIO.22',
-  'GPIO.26',
-  'GPIO.23',
-  '0v',
-  'GPIO.24',
-  'GPIO.27',
-  'GPIO.25',
-  'GPIO.28',
-  '0v',
-  'GPIO.29'
+  {"pin":1,"name":"3.3v"},
+  {"pin":2,"name":"5v"},
+  {"pin":3,"name":"SDA.1","gpio":2},
+  {"pin":4,"name":"5v"},
+  {"pin":5,"name":"SCL.1","gpio":3},
+  {"pin":6,"name":"0v"},
+  {"pin":7,"name":"GPIO. 7","gpio":4},
+  {"pin":8,"name":"TxD","gpio":14},
+  {"pin":9,"name":"0v"},
+  {"pin":10,"name":"RxD","gpio":15},
+  {"pin":11,"name":"GPIO. 0","gpio":17},
+  {"pin":12,"name":"GPIO. 1","gpio":18},
+  {"pin":13,"name":"GPIO. 2","gpio":27},
+  {"pin":14,"name":"0v"},
+  {"pin":15,"name":"GPIO. 3","gpio":22},
+  {"pin":16,"name":"GPIO. 4","gpio":23},
+  {"pin":17,"name":"3.3v"},
+  {"pin":18,"name":"GPIO. 5","gpio":24},
+  {"pin":19,"name":"MOSI","gpio":10},
+  {"pin":20,"name":"0v"},
+  {"pin":21,"name":"MISO","gpio":9},
+  {"pin":22,"name":"GPIO. 6","gpio":25},
+  {"pin":23,"name":"SCLK","gpio":11},
+  {"pin":24,"name":"CE0","gpio":8},
+  {"pin":25,"name":"0v"},
+  {"pin":26,"name":"CE1","gpio":7},
+  {"pin":27,"name":"SDA.0","gpio":0},
+  {"pin":28,"name":"SCL.0","gpio":1},
+  {"pin":29,"name":"GPIO.21","gpio":5},
+  {"pin":30,"name":"0v"},
+  {"pin":31,"name":"GPIO.22","gpio":6},
+  {"pin":32,"name":"GPIO.26","gpio":12},
+  {"pin":33,"name":"GPIO.23","gpio":13},
+  {"pin":34,"name":"0v"},
+  {"pin":35,"name":"GPIO.24","gpio":19},
+  {"pin":36,"name":"GPIO.27","gpio":16},
+  {"pin":37,"name":"GPIO.25","gpio":26},
+  {"pin":38,"name":"GPIO.28","gpio":20},
+  {"pin":39,"name":"0v"},
+  {"pin":40,"name":"GPIO.29","gpio":21}
 ];
-
-
 
 new Vue({
   el: '#app',
@@ -109,6 +109,9 @@ new Vue({
         a.push(i);
       }
       return a;
+    },
+    pinClass: function(i, j) {
+      return 'pin' + (i * 2 + j + 1) + ' ' + 'side' + j;
     },
     rstyle: function(i) {
       var style = {};
