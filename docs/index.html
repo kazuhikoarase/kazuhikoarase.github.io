@@ -2,24 +2,22 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <base href="https://kazuhikoarase.github.io/" />
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.js"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css"/>
   <title>Kazuhiko Arase's Workplace</title>
+  <script type="module" crossorigin src="/assets/main-BjiUHxPK.js"></script>
 </head>
 <body>
+  <div id="app">
   <p>Kazuhiko Arase's Workplace</p>
-  <ul>
-    <li><a href="simcirjs/">SimcirJS</a></li>
-    <li><a href="qrcode-generator/js/demo/">QR Code Generator</a></li>
-    <li><a href="kaleidoscope/">kaleidoscope</a></li>
-    <li><a href="spherical-viewer/demo/">Spherical Viewer</a></li>
-    <li><a href="comfortable-js/demo/">ComfortableJS</a></li>
-    <li><a href="vue-metronome/demo/">vue-metronome</a></li>
+  <ul v-for="linkGrp in links">
+    <li v-for="link in linkGrp"><a :href="link.ref? baseUrl + link.href : link.href">{{ link.label }}</a></li>
   </ul>
-  <ul>
-    <li><a href="svgtk/demo/">SVG Toolkit (with Gears)</a></li>
-    <li><a href="ganttchart-js/demo/">GanttChartS</a></li>
-    <li><a href="jajb">JAJB</a></li>
-  </ul>
+  </div>
 </body>
 </html>
+

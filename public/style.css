@@ -14,3 +14,7 @@ BODY {
   color: #333333;
   background-color: #ffffff;
 }
+
+[v-cloak] {
+  display: none;
+}
