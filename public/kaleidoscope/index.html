@@ -1,0 +1,90 @@
+<!doctype html>
+<html itemscope="" itemtype="http://schema.org/CreativeWork">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+<style type="text/css">
+BODY {
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+  background-color: #000000;
+}
+#log {
+  padding: 4px;
+  margin:8px;
+  position: absolute;
+  left: 0px;
+  top: 140px;
+  color: #ffffff;
+  background-color: #666666;
+  font-family: arial, sans-serif;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+</style>
+<script type="text/javascript" src="assets/kaleidoscope.js"></script>
+<script type="text/javascript">
+window.onload = function() {
+
+  var lpf = function(len) {
+    var buf = [];
+    for (var i = 0; i < len; i += 1) {
+        buf.push(0);
+    }
+    var i = 0;
+    var putValue = function(n) {
+        buf[i] = n;
+        i = (i + 1) % len;
+    };
+    var getValue = function() {
+        var sum = 0;
+        for (var i = 0; i < len; i += 1) {
+            sum += buf[i];
+        }
+        return sum / len;
+    };
+    return {
+        putValue : putValue,
+        getValue : getValue
+    };
+  };
+
+  var fps = lpf(32);
+  var lastTime = 0;
+  var opts = {
+      globalCompositeOperation: 'lighter',
+      renderHandler: function(currTime) {
+      fps.putValue(1000 / (currTime - lastTime) );
+      lastTime = currTime;
+      document.getElementById('log').innerHTML = ~~fps.getValue() + 'fps';
+    }
+  };
+
+  var ctx = document.getElementById('cv').getContext('2d');
+  var imageSrcList = ctx.canvas.innerHTML.
+    replace(/^\s+|\s+$/g,'').split(/\s+/g);
+  var ks = kaleidoscope(ctx, imageSrcList, opts);
+};
+</script>
+<title itemprop="name">kaleidoscope</title>
+</head>
+<body>
+<a href="../" style="position:absolute;left:4px;top:4px;color:#ffffff;">home</a>
+<a style="position: absolute; right: 0px; top: 0px;" href="https://github.com/kazuhikoarase/kaleidoscope"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_white_ffffff.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+<img itemprop="image" src="assets/kaleidoscope.png" style="display:none;"/>
+<div itemprop="description" style="display:none;">kaleidoscope in HTML5's canvas</div>
+<canvas id="cv">
+assets/b.png
+assets/c.png
+assets/g.png
+assets/m.png
+assets/o.png
+assets/p.png
+assets/r.png
+assets/y.png
+</canvas>
+<span id="log"></span>
+</body>
+</html>
